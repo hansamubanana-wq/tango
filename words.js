@@ -78,7 +78,6 @@ const allWords = [
   { en: "reality", ja: "現実" },
   { en: "carry on with", ja: "~をがんばり通す" },
   { en: "bring up", ja: "~を育てる (raise/bring up)" },
-  // ※「Barack Obama」の行を削除したよ！
   { en: "sitting", ja: "現職の" },
   { en: "president", ja: "大統領" },
   { en: "make a speech", ja: "スピーチをする" },
