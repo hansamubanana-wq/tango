@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>単語コンクール対策アプリ</title>
   <style>
-    /* 全体のスタイル（スマホ・PC両対応） */
+    /* ＝＝＝ 全体の豪華なスタイル ＝＝＝ */
     body {
       font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-      background-color: #f0f4f8;
+      /* モダンなグラデーション背景 */
+      background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
       color: #333;
       margin: 0;
       padding: 0;
@@ -17,122 +18,215 @@
       align-items: center;
       min-height: 100vh;
     }
+
+    /* メインコンテナ（ガラス風の少し透けたリッチなデザイン） */
     .container {
-      background: #fff;
+      background: rgba(255, 255, 255, 0.95);
       width: 90%;
-      max-width: 500px;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      max-width: 550px;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
       text-align: center;
+      /* 画面切り替え時のアニメーション */
+      animation: fadeIn 0.5s ease-out;
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       color: #2c3e50;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
+      letter-spacing: 1px;
     }
+    
+    h2 {
+      color: #34495e;
+    }
+
     .hidden {
       display: none !important;
     }
     
-    /* ボタンのスタイル */
+    /* ＝＝＝ ボタンの豪華なスタイル ＝＝＝ */
     button {
-      background-color: #3498db;
-      color: white;
       border: none;
-      padding: 12px 20px;
+      padding: 15px 20px;
       margin: 10px 0;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background-color: #2980b9;
-    }
-    button:disabled {
-      background-color: #bdc3c7;
-      cursor: not-allowed;
-    }
-    .danger-btn {
-      background-color: #e74c3c;
-    }
-    .danger-btn:hover {
-      background-color: #c0392b;
-    }
-
-    /* プレイ画面のスタイル */
-    #ja-text {
-      font-size: 1.8rem;
-      font-weight: bold;
-      margin: 20px 0;
-      color: #2c3e50;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 15px;
-      font-size: 1.2rem;
-      border: 2px solid #bdc3c7;
-      border-radius: 8px;
-      box-sizing: border-box;
-      margin-bottom: 15px;
-      outline: none;
-      transition: border 0.3s;
-    }
-    input[type="text"]:focus {
-      border-color: #3498db;
-    }
-    #feedback {
+      border-radius: 12px;
       font-size: 1.1rem;
       font-weight: bold;
-      min-height: 24px;
-      margin-bottom: 15px;
+      cursor: pointer;
+      width: 100%;
+      color: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
     }
-    .correct { color: #27ae60; }
-    .incorrect { color: #e74c3c; }
+    
+    button:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    
+    button:active:not(:disabled) {
+      transform: translateY(1px);
+    }
 
-    /* 結果画面 */
-    .mistake-list-display {
-      text-align: left;
-      background: #fdf2f0;
-      padding: 15px;
-      border-radius: 8px;
-      max-height: 150px;
-      overflow-y: auto;
-      font-size: 0.9rem;
+    /* 各ボタンのグラデーションカラー */
+    .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .btn-secondary { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: #2c3e50; }
+    .btn-warning { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); color: #2c3e50; }
+    .btn-danger { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
+    
+    button:disabled {
+      background: #e0e0e0;
+      color: #999;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* ＝＝＝ プレイ画面のスタイル ＝＝＝ */
+    #ja-text {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 25px 0;
+      color: #2c3e50;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 18px;
+      font-size: 1.4rem;
+      border: 2px solid #e0e6ed;
+      border-radius: 12px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+      outline: none;
+      transition: all 0.3s;
+      text-align: center;
+      background-color: #f8fafc;
+    }
+    
+    input[type="text"]:focus {
+      border-color: #667eea;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    }
+    
+    #feedback {
+      font-size: 1.3rem;
+      font-weight: bold;
+      min-height: 35px;
       margin-bottom: 20px;
     }
+    .correct { color: #27ae60; animation: pop 0.3s ease; }
+    .incorrect { color: #e74c3c; animation: shake 0.4s ease; }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    #progress {
+      font-size: 1rem;
+      color: #7f8c8d;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    /* ＝＝＝ 単語一覧・結果画面のスタイル ＝＝＝ */
+    .scroll-box {
+      background: #fdfdfd;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #e0e6ed;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      text-align: left;
+      font-size: 1rem;
+    }
+
+    /* テーブルスタイル（単語一覧用） */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background-color: #f4f7f6;
+      color: #2c3e50;
+      position: sticky;
+      top: 0;
+    }
+    td:first-child { font-weight: bold; color: #7f8c8d; width: 10%; }
+    td:nth-child(2) { font-weight: bold; color: #667eea; width: 45%; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>単語コンクール対策</h1>
+  <div class="container" id="app-container">
+    <h1>✨ 単語コンクール対策 ✨</h1>
 
     <div id="menu-screen">
-      <p>収録単語数: <span id="total-word-count">0</span>語</p>
-      <button id="start-all-btn">全単語でスタート</button>
-      <button id="start-mistake-btn" disabled>間違いリストでスタート (<span id="mistake-count">0</span>)</button>
-      <button id="clear-mistake-btn" class="danger-btn hidden">間違いリストをリセット</button>
+      <p style="color: #7f8c8d; font-weight: bold;">収録単語数: <span id="total-word-count" style="color:#2c3e50; font-size:1.2rem;">0</span> 語</p>
+      
+      <button id="start-all-btn" class="btn-primary">▶ 全単語でスタート</button>
+      <button id="start-mistake-btn" class="btn-warning" disabled>🔥 間違いリストでスタート (<span id="mistake-count">0</span>)</button>
+      <button id="view-list-btn" class="btn-secondary">📖 全単語一覧を見る</button>
+      <button id="clear-mistake-btn" class="btn-danger hidden">🗑 間違いリストをリセット</button>
+    </div>
+
+    <div id="word-list-screen" class="hidden">
+      <h2>全単語一覧</h2>
+      <div class="scroll-box">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>英語</th>
+              <th>日本語</th>
+            </tr>
+          </thead>
+          <tbody id="word-list-tbody">
+            </tbody>
+        </table>
+      </div>
+      <button class="btn-secondary back-to-menu-btn">戻る</button>
     </div>
 
     <div id="play-screen" class="hidden">
       <div id="progress">問題 1 / 10</div>
       <div id="ja-text">日本語</div>
-      <input type="text" id="en-input" placeholder="英語を入力してEnter" autocomplete="off" autocorrect="off" autocapitalize="off">
+      <input type="text" id="en-input" placeholder="英語を入力 (Enterで判定)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       <div id="feedback"></div>
-      <button id="next-btn" class="hidden">次へ</button>
+      <button id="next-btn" class="btn-primary hidden">次へ</button>
+      <button class="btn-secondary back-to-menu-btn" style="margin-top: 30px; font-size: 0.9rem; padding: 10px;">中断してメニューに戻る</button>
     </div>
 
     <div id="result-screen" class="hidden">
-      <h2>テスト終了！</h2>
-      <p>正解数: <span id="score">0</span> / <span id="total-questions">0</span></p>
+      <h2>🎉 テスト終了！</h2>
+      <p style="font-size: 1.2rem; font-weight: bold;">正解数: <span id="score" style="color: #27ae60; font-size: 1.5rem;">0</span> / <span id="total-questions">0</span></p>
+      
       <div id="mistake-log-container" class="hidden">
-        <p>今回間違えた単語:</p>
-        <div id="mistake-log" class="mistake-list-display"></div>
+        <p style="color: #e74c3c; font-weight: bold;">今回間違えた単語:</p>
+        <div id="mistake-log" class="scroll-box"></div>
       </div>
-      <button id="back-to-menu-btn">メニューに戻る</button>
+      <button class="btn-primary back-to-menu-btn">メニューに戻る</button>
     </div>
   </div>
 
@@ -150,11 +244,12 @@
     const menuScreen = document.getElementById('menu-screen');
     const playScreen = document.getElementById('play-screen');
     const resultScreen = document.getElementById('result-screen');
+    const wordListScreen = document.getElementById('word-list-screen');
     
     const startAllBtn = document.getElementById('start-all-btn');
     const startMistakeBtn = document.getElementById('start-mistake-btn');
     const clearMistakeBtn = document.getElementById('clear-mistake-btn');
-    const backToMenuBtn = document.getElementById('back-to-menu-btn');
+    const viewListBtn = document.getElementById('view-list-btn');
     const nextBtn = document.getElementById('next-btn');
     
     const enInput = document.getElementById('en-input');
@@ -163,9 +258,11 @@
     const feedbackText = document.getElementById('feedback');
     const mistakeCountSpan = document.getElementById('mistake-count');
     
+    // 戻るボタン（複数あるのでまとめて取得）
+    const backButtons = document.querySelectorAll('.back-to-menu-btn');
+
     // 初期化処理
     function initMenu() {
-      // words.js で定義された allWords を使う
       if (typeof allWords !== 'undefined') {
         document.getElementById('total-word-count').innerText = allWords.length;
       } else {
@@ -174,9 +271,14 @@
       
       updateMistakeUI();
       
+      // 画面切り替え時のアニメーション再トリガー用
+      document.getElementById('app-container').style.animation = 'none';
+      setTimeout(() => document.getElementById('app-container').style.animation = 'fadeIn 0.5s ease-out', 10);
+
       menuScreen.classList.remove('hidden');
       playScreen.classList.add('hidden');
       resultScreen.classList.add('hidden');
+      wordListScreen.classList.add('hidden');
     }
 
     function updateMistakeUI() {
@@ -190,6 +292,27 @@
       }
     }
 
+    // 単語一覧を表示する機能
+    function showWordList() {
+      const tbody = document.getElementById('word-list-tbody');
+      tbody.innerHTML = ''; // 一旦クリア
+      
+      if (typeof allWords !== 'undefined') {
+        allWords.forEach((word, index) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${word.en}</td>
+            <td>${word.ja}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      menuScreen.classList.add('hidden');
+      wordListScreen.classList.remove('hidden');
+    }
+
     // ゲームの進行
     function startGame(mode) {
       if (mode === 'all') {
@@ -198,13 +321,16 @@
         currentQuestions = [...savedMistakes];
       }
       
-      // 単語の出題順をランダムにする
+      // シャッフル
       currentQuestions.sort(() => Math.random() - 0.5);
 
       currentIndex = 0;
       score = 0;
       currentMistakes = [];
       
+      document.getElementById('app-container').style.animation = 'none';
+      setTimeout(() => document.getElementById('app-container').style.animation = 'fadeIn 0.4s ease-out', 10);
+
       menuScreen.classList.add('hidden');
       playScreen.classList.remove('hidden');
       
@@ -213,6 +339,7 @@
 
     function showQuestion() {
       feedbackText.innerText = "";
+      feedbackText.className = ""; // クラスをリセット（アニメーション用）
       enInput.value = "";
       enInput.disabled = false;
       nextBtn.classList.add('hidden');
@@ -220,7 +347,7 @@
       progressText.innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
       jaText.innerText = currentQuestions[currentIndex].ja;
       
-      enInput.focus();
+      setTimeout(() => enInput.focus(), 50); // 少し遅らせてフォーカス（スマホ対策）
     }
 
     // 判定処理
@@ -238,9 +365,9 @@
         savedMistakes = savedMistakes.filter(w => w.en !== currentQuestions[currentIndex].en);
         localStorage.setItem("mistakeWords", JSON.stringify(savedMistakes));
         
-        setTimeout(nextQuestion, 500);
+        setTimeout(nextQuestion, 600);
       } else {
-        feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong>${currentQuestions[currentIndex].en}</strong>`;
+        feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong style="font-size:1.5rem;">${currentQuestions[currentIndex].en}</strong>`;
         feedbackText.className = "incorrect";
         
         const isAlreadyMistaken = savedMistakes.some(w => w.en === currentQuestions[currentIndex].en);
@@ -265,6 +392,9 @@
     }
 
     function showResult() {
+      document.getElementById('app-container').style.animation = 'none';
+      setTimeout(() => document.getElementById('app-container').style.animation = 'fadeIn 0.5s ease-out', 10);
+
       playScreen.classList.add('hidden');
       resultScreen.classList.remove('hidden');
       
@@ -276,7 +406,7 @@
       
       if (currentMistakes.length > 0) {
         mistakeLogContainer.classList.remove('hidden');
-        mistakeLog.innerHTML = currentMistakes.map(w => `${w.ja} → <strong>${w.en}</strong>`).join('<br>');
+        mistakeLog.innerHTML = currentMistakes.map(w => `${w.ja} <br>→ <strong style="color:#667eea;">${w.en}</strong>`).join('<hr style="border:0; border-bottom:1px solid #eee; margin:8px 0;">');
       } else {
         mistakeLogContainer.classList.add('hidden');
       }
@@ -285,8 +415,13 @@
     // イベントリスナー
     startAllBtn.addEventListener('click', () => startGame('all'));
     startMistakeBtn.addEventListener('click', () => startGame('mistake'));
-    backToMenuBtn.addEventListener('click', initMenu);
+    viewListBtn.addEventListener('click', showWordList);
     nextBtn.addEventListener('click', nextQuestion);
+    
+    // 全ての「戻る」ボタンにイベントを追加
+    backButtons.forEach(btn => {
+      btn.addEventListener('click', initMenu);
+    });
     
     clearMistakeBtn.addEventListener('click', () => {
       if(confirm('間違いリストをすべてリセットしてもいい？')) {
@@ -304,7 +439,7 @@
       }
     });
 
-    // 初期化実行（少し待ってから実行してwords.jsの読み込み完了を確実にする）
+    // 初期化実行
     window.onload = () => {
       initMenu();
     };
