@@ -8,7 +8,6 @@
     /* ＝＝＝ ダークモードのスタイル ＝＝＝ */
     body {
       font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-      /* 深い夜空のようなグラデーション */
       background: linear-gradient(135deg, #141e30 0%, #243b55 100%);
       color: #e0e0e0;
       margin: 0;
@@ -19,7 +18,6 @@
       min-height: 100vh;
     }
 
-    /* メインコンテナ（ダークグラス風） */
     .container {
       background: rgba(30, 35, 45, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -29,6 +27,8 @@
       border-radius: 20px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.5);
       text-align: center;
+      /* Safari用のプレフィックスを追加（赤いエラー解消） */
+      -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
       animation: fadeIn 0.5s ease-out;
     }
@@ -78,11 +78,11 @@
       transform: translateY(1px);
     }
 
-    /* ダークモードに映えるグラデーションボタン */
     .btn-primary { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #000; }
     .btn-secondary { background: linear-gradient(135deg, #434343 0%, #000000 100%); border: 1px solid #555; }
     .btn-warning { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); color: #000; }
     .btn-danger { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
+    .btn-interrupt { margin-top: 30px; font-size: 0.9rem; padding: 10px; }
     
     button:disabled {
       background: #333;
@@ -130,6 +130,7 @@
     }
     .correct { color: #00e676; animation: pop 0.3s ease; text-shadow: 0 0 8px rgba(0,230,118,0.5); }
     .incorrect { color: #ff5252; animation: shake 0.4s ease; text-shadow: 0 0 8px rgba(255,82,82,0.5); }
+    .correct-word { font-size: 1.5rem; color: #00f2fe; }
 
     @keyframes pop {
       0% { transform: scale(1); }
@@ -149,7 +150,15 @@
       margin-bottom: 10px;
     }
 
-    /* ＝＝＝ 単語一覧・結果画面のスタイル ＝＝＝ */
+    /* ＝＝＝ 単語一覧・結果画面のスタイル（インラインスタイルをここに移動） ＝＝＝ */
+    .menu-stats-text { color: #9ba4b5; font-weight: bold; }
+    #total-word-count { color: #ffffff; font-size: 1.2rem; }
+    .result-score-text { font-size: 1.2rem; font-weight: bold; }
+    #score { color: #00e676; font-size: 1.5rem; }
+    .mistake-log-title { color: #ff5252; font-weight: bold; }
+    .mistake-word { color: #00f2fe; }
+    .mistake-separator { border: 0; border-bottom: 1px solid #333; margin: 8px 0; }
+
     .scroll-box {
       background: #1a1f2b;
       padding: 15px;
@@ -162,7 +171,6 @@
       font-size: 1rem;
     }
 
-    /* テーブルスタイル */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -187,7 +195,7 @@
     <h1>✨ 単語コンクール対策 ✨</h1>
 
     <div id="menu-screen">
-      <p style="color: #9ba4b5; font-weight: bold;">収録単語数: <span id="total-word-count" style="color:#ffffff; font-size:1.2rem;">0</span> 語</p>
+      <p class="menu-stats-text">収録単語数: <span id="total-word-count">0</span> 語</p>
       
       <button id="start-all-btn" class="btn-primary">▶ 全単語でスタート</button>
       <button id="start-mistake-btn" class="btn-warning" disabled>🔥 間違いリストでスタート (<span id="mistake-count">0</span>)</button>
@@ -216,18 +224,18 @@
     <div id="play-screen" class="hidden">
       <div id="progress">問題 1 / 10</div>
       <div id="ja-text">日本語</div>
-      <input type="text" id="en-input" placeholder="英語を入力 (Enterで判定)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <input type="text" id="en-input" placeholder="英語を入力 (Enterで判定)" autocomplete="off" spellcheck="false">
       <div id="feedback"></div>
       <button id="next-btn" class="btn-primary hidden">次へ</button>
-      <button class="btn-secondary back-to-menu-btn" style="margin-top: 30px; font-size: 0.9rem; padding: 10px;">中断してメニューに戻る</button>
+      <button class="btn-secondary back-to-menu-btn btn-interrupt">中断してメニューに戻る</button>
     </div>
 
     <div id="result-screen" class="hidden">
       <h2>🎉 テスト終了！</h2>
-      <p style="font-size: 1.2rem; font-weight: bold;">正解数: <span id="score" style="color: #00e676; font-size: 1.5rem;">0</span> / <span id="total-questions">0</span></p>
+      <p class="result-score-text">正解数: <span id="score">0</span> / <span id="total-questions">0</span></p>
       
       <div id="mistake-log-container" class="hidden">
-        <p style="color: #ff5252; font-weight: bold;">今回間違えた単語:</p>
+        <p class="mistake-log-title">今回間違えた単語:</p>
         <div id="mistake-log" class="scroll-box"></div>
       </div>
       <button class="btn-primary back-to-menu-btn">メニューに戻る</button>
@@ -368,7 +376,7 @@
         
         setTimeout(nextQuestion, 600);
       } else {
-        feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong style="font-size:1.5rem; color:#00f2fe;">${currentQuestions[currentIndex].en}</strong>`;
+        feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong class="correct-word">${currentQuestions[currentIndex].en}</strong>`;
         feedbackText.className = "incorrect";
         
         const isAlreadyMistaken = savedMistakes.some(w => w.en === currentQuestions[currentIndex].en);
@@ -407,7 +415,7 @@
       
       if (currentMistakes.length > 0) {
         mistakeLogContainer.classList.remove('hidden');
-        mistakeLog.innerHTML = currentMistakes.map(w => `${w.ja} <br>→ <strong style="color:#00f2fe;">${w.en}</strong>`).join('<hr style="border:0; border-bottom:1px solid #333; margin:8px 0;">');
+        mistakeLog.innerHTML = currentMistakes.map(w => `${w.ja} <br>→ <strong class="mistake-word">${w.en}</strong>`).join('<hr class="mistake-separator">');
       } else {
         mistakeLogContainer.classList.add('hidden');
       }
