@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>単語コンクール対策アプリ</title>
   <style>
-    /* ＝＝＝ 全体の豪華なスタイル ＝＝＝ */
+    /* ＝＝＝ ダークモードのスタイル ＝＝＝ */
     body {
       font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-      /* モダンなグラデーション背景 */
-      background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
-      color: #333;
+      /* 深い夜空のようなグラデーション */
+      background: linear-gradient(135deg, #141e30 0%, #243b55 100%);
+      color: #e0e0e0;
       margin: 0;
       padding: 0;
       display: flex;
@@ -19,16 +19,17 @@
       min-height: 100vh;
     }
 
-    /* メインコンテナ（ガラス風の少し透けたリッチなデザイン） */
+    /* メインコンテナ（ダークグラス風） */
     .container {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(30, 35, 45, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       width: 90%;
       max-width: 550px;
       padding: 40px 30px;
       border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
       text-align: center;
-      /* 画面切り替え時のアニメーション */
+      backdrop-filter: blur(10px);
       animation: fadeIn 0.5s ease-out;
     }
 
@@ -39,20 +40,21 @@
 
     h1 {
       font-size: 1.8rem;
-      color: #2c3e50;
+      color: #00f2fe;
       margin-bottom: 25px;
       letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
     }
     
     h2 {
-      color: #34495e;
+      color: #4facfe;
     }
 
     .hidden {
       display: none !important;
     }
     
-    /* ＝＝＝ ボタンの豪華なスタイル ＝＝＝ */
+    /* ＝＝＝ ボタンのスタイル ＝＝＝ */
     button {
       border: none;
       padding: 15px 20px;
@@ -63,30 +65,31 @@
       cursor: pointer;
       width: 100%;
       color: white;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       transition: all 0.3s ease;
     }
     
     button:hover:not(:disabled) {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
     
     button:active:not(:disabled) {
       transform: translateY(1px);
     }
 
-    /* 各ボタンのグラデーションカラー */
-    .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    .btn-secondary { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: #2c3e50; }
-    .btn-warning { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); color: #2c3e50; }
+    /* ダークモードに映えるグラデーションボタン */
+    .btn-primary { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #000; }
+    .btn-secondary { background: linear-gradient(135deg, #434343 0%, #000000 100%); border: 1px solid #555; }
+    .btn-warning { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); color: #000; }
     .btn-danger { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
     
     button:disabled {
-      background: #e0e0e0;
-      color: #999;
+      background: #333;
+      color: #777;
       box-shadow: none;
       cursor: not-allowed;
+      border: 1px solid #444;
     }
 
     /* ＝＝＝ プレイ画面のスタイル ＝＝＝ */
@@ -94,28 +97,29 @@
       font-size: 2rem;
       font-weight: bold;
       margin: 25px 0;
-      color: #2c3e50;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+      color: #ffffff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
     
     input[type="text"] {
       width: 100%;
       padding: 18px;
       font-size: 1.4rem;
-      border: 2px solid #e0e6ed;
+      border: 2px solid #555;
       border-radius: 12px;
       box-sizing: border-box;
       margin-bottom: 20px;
       outline: none;
       transition: all 0.3s;
       text-align: center;
-      background-color: #f8fafc;
+      background-color: #1a1f2b;
+      color: #00f2fe;
     }
     
     input[type="text"]:focus {
-      border-color: #667eea;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+      border-color: #00f2fe;
+      background-color: #242c3d;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
     }
     
     #feedback {
@@ -124,8 +128,8 @@
       min-height: 35px;
       margin-bottom: 20px;
     }
-    .correct { color: #27ae60; animation: pop 0.3s ease; }
-    .incorrect { color: #e74c3c; animation: shake 0.4s ease; }
+    .correct { color: #00e676; animation: pop 0.3s ease; text-shadow: 0 0 8px rgba(0,230,118,0.5); }
+    .incorrect { color: #ff5252; animation: shake 0.4s ease; text-shadow: 0 0 8px rgba(255,82,82,0.5); }
 
     @keyframes pop {
       0% { transform: scale(1); }
@@ -140,17 +144,17 @@
 
     #progress {
       font-size: 1rem;
-      color: #7f8c8d;
+      color: #9ba4b5;
       font-weight: bold;
       margin-bottom: 10px;
     }
 
     /* ＝＝＝ 単語一覧・結果画面のスタイル ＝＝＝ */
     .scroll-box {
-      background: #fdfdfd;
+      background: #1a1f2b;
       padding: 15px;
       border-radius: 12px;
-      border: 1px solid #e0e6ed;
+      border: 1px solid #333;
       max-height: 300px;
       overflow-y: auto;
       margin-bottom: 20px;
@@ -158,23 +162,23 @@
       font-size: 1rem;
     }
 
-    /* テーブルスタイル（単語一覧用） */
+    /* テーブルスタイル */
     table {
       width: 100%;
       border-collapse: collapse;
     }
     th, td {
       padding: 10px;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid #333;
     }
     th {
-      background-color: #f4f7f6;
-      color: #2c3e50;
+      background-color: #242c3d;
+      color: #4facfe;
       position: sticky;
       top: 0;
     }
-    td:first-child { font-weight: bold; color: #7f8c8d; width: 10%; }
-    td:nth-child(2) { font-weight: bold; color: #667eea; width: 45%; }
+    td:first-child { font-weight: bold; color: #777; width: 10%; }
+    td:nth-child(2) { font-weight: bold; color: #00f2fe; width: 45%; }
   </style>
 </head>
 <body>
@@ -183,7 +187,7 @@
     <h1>✨ 単語コンクール対策 ✨</h1>
 
     <div id="menu-screen">
-      <p style="color: #7f8c8d; font-weight: bold;">収録単語数: <span id="total-word-count" style="color:#2c3e50; font-size:1.2rem;">0</span> 語</p>
+      <p style="color: #9ba4b5; font-weight: bold;">収録単語数: <span id="total-word-count" style="color:#ffffff; font-size:1.2rem;">0</span> 語</p>
       
       <button id="start-all-btn" class="btn-primary">▶ 全単語でスタート</button>
       <button id="start-mistake-btn" class="btn-warning" disabled>🔥 間違いリストでスタート (<span id="mistake-count">0</span>)</button>
@@ -220,10 +224,10 @@
 
     <div id="result-screen" class="hidden">
       <h2>🎉 テスト終了！</h2>
-      <p style="font-size: 1.2rem; font-weight: bold;">正解数: <span id="score" style="color: #27ae60; font-size: 1.5rem;">0</span> / <span id="total-questions">0</span></p>
+      <p style="font-size: 1.2rem; font-weight: bold;">正解数: <span id="score" style="color: #00e676; font-size: 1.5rem;">0</span> / <span id="total-questions">0</span></p>
       
       <div id="mistake-log-container" class="hidden">
-        <p style="color: #e74c3c; font-weight: bold;">今回間違えた単語:</p>
+        <p style="color: #ff5252; font-weight: bold;">今回間違えた単語:</p>
         <div id="mistake-log" class="scroll-box"></div>
       </div>
       <button class="btn-primary back-to-menu-btn">メニューに戻る</button>
@@ -258,7 +262,6 @@
     const feedbackText = document.getElementById('feedback');
     const mistakeCountSpan = document.getElementById('mistake-count');
     
-    // 戻るボタン（複数あるのでまとめて取得）
     const backButtons = document.querySelectorAll('.back-to-menu-btn');
 
     // 初期化処理
@@ -271,7 +274,6 @@
       
       updateMistakeUI();
       
-      // 画面切り替え時のアニメーション再トリガー用
       document.getElementById('app-container').style.animation = 'none';
       setTimeout(() => document.getElementById('app-container').style.animation = 'fadeIn 0.5s ease-out', 10);
 
@@ -292,10 +294,10 @@
       }
     }
 
-    // 単語一覧を表示する機能
+    // 単語一覧
     function showWordList() {
       const tbody = document.getElementById('word-list-tbody');
-      tbody.innerHTML = ''; // 一旦クリア
+      tbody.innerHTML = '';
       
       if (typeof allWords !== 'undefined') {
         allWords.forEach((word, index) => {
@@ -313,7 +315,7 @@
       wordListScreen.classList.remove('hidden');
     }
 
-    // ゲームの進行
+    // ゲーム進行
     function startGame(mode) {
       if (mode === 'all') {
         currentQuestions = [...allWords];
@@ -321,7 +323,6 @@
         currentQuestions = [...savedMistakes];
       }
       
-      // シャッフル
       currentQuestions.sort(() => Math.random() - 0.5);
 
       currentIndex = 0;
@@ -339,7 +340,7 @@
 
     function showQuestion() {
       feedbackText.innerText = "";
-      feedbackText.className = ""; // クラスをリセット（アニメーション用）
+      feedbackText.className = "";
       enInput.value = "";
       enInput.disabled = false;
       nextBtn.classList.add('hidden');
@@ -347,7 +348,7 @@
       progressText.innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
       jaText.innerText = currentQuestions[currentIndex].ja;
       
-      setTimeout(() => enInput.focus(), 50); // 少し遅らせてフォーカス（スマホ対策）
+      setTimeout(() => enInput.focus(), 50);
     }
 
     // 判定処理
@@ -367,7 +368,7 @@
         
         setTimeout(nextQuestion, 600);
       } else {
-        feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong style="font-size:1.5rem;">${currentQuestions[currentIndex].en}</strong>`;
+        feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong style="font-size:1.5rem; color:#00f2fe;">${currentQuestions[currentIndex].en}</strong>`;
         feedbackText.className = "incorrect";
         
         const isAlreadyMistaken = savedMistakes.some(w => w.en === currentQuestions[currentIndex].en);
@@ -406,19 +407,17 @@
       
       if (currentMistakes.length > 0) {
         mistakeLogContainer.classList.remove('hidden');
-        mistakeLog.innerHTML = currentMistakes.map(w => `${w.ja} <br>→ <strong style="color:#667eea;">${w.en}</strong>`).join('<hr style="border:0; border-bottom:1px solid #eee; margin:8px 0;">');
+        mistakeLog.innerHTML = currentMistakes.map(w => `${w.ja} <br>→ <strong style="color:#00f2fe;">${w.en}</strong>`).join('<hr style="border:0; border-bottom:1px solid #333; margin:8px 0;">');
       } else {
         mistakeLogContainer.classList.add('hidden');
       }
     }
 
-    // イベントリスナー
     startAllBtn.addEventListener('click', () => startGame('all'));
     startMistakeBtn.addEventListener('click', () => startGame('mistake'));
     viewListBtn.addEventListener('click', showWordList);
     nextBtn.addEventListener('click', nextQuestion);
     
-    // 全ての「戻る」ボタンにイベントを追加
     backButtons.forEach(btn => {
       btn.addEventListener('click', initMenu);
     });
@@ -439,7 +438,6 @@
       }
     });
 
-    // 初期化実行
     window.onload = () => {
       initMenu();
     };

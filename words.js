@@ -1,6 +1,5 @@
 // words.js
 const allWords = [
-
   { en: "as you know", ja: "ご存知のように" },
   { en: "labor", ja: "労働" },
   { en: "thanksgiving", ja: "感謝" },
@@ -79,7 +78,7 @@ const allWords = [
   { en: "reality", ja: "現実" },
   { en: "carry on with", ja: "~をがんばり通す" },
   { en: "bring up", ja: "~を育てる (raise/bring up)" },
-  { en: "Barack Obama", ja: "バラク・オバマ" },
+  // ※「Barack Obama」の行を削除したよ！
   { en: "sitting", ja: "現職の" },
   { en: "president", ja: "大統領" },
   { en: "make a speech", ja: "スピーチをする" },
