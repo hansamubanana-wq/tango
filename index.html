@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>単語コンクール対策アプリ</title>
+  <style>
+    /* 全体のスタイル（スマホ・PC両対応） */
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      width: 90%;
+      max-width: 500px;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.5rem;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    .hidden {
+      display: none !important;
+    }
+    
+    /* ボタンのスタイル */
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      margin: 10px 0;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    button:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    .danger-btn {
+      background-color: #e74c3c;
+    }
+    .danger-btn:hover {
+      background-color: #c0392b;
+    }
+
+    /* プレイ画面のスタイル */
+    #ja-text {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 20px 0;
+      color: #2c3e50;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.2rem;
+      border: 2px solid #bdc3c7;
+      border-radius: 8px;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+      outline: none;
+      transition: border 0.3s;
+    }
+    input[type="text"]:focus {
+      border-color: #3498db;
+    }
+    #feedback {
+      font-size: 1.1rem;
+      font-weight: bold;
+      min-height: 24px;
+      margin-bottom: 15px;
+    }
+    .correct { color: #27ae60; }
+    .incorrect { color: #e74c3c; }
+
+    /* 結果画面 */
+    .mistake-list-display {
+      text-align: left;
+      background: #fdf2f0;
+      padding: 15px;
+      border-radius: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>単語コンクール対策</h1>
+
+    <div id="menu-screen">
+      <p>収録単語数: <span id="total-word-count">0</span>語</p>
+      <button id="start-all-btn">全単語でスタート</button>
+      <button id="start-mistake-btn" disabled>間違いリストでスタート (<span id="mistake-count">0</span>)</button>
+      <button id="clear-mistake-btn" class="danger-btn hidden">間違いリストをリセット</button>
+    </div>
+
+    <div id="play-screen" class="hidden">
+      <div id="progress">問題 1 / 10</div>
+      <div id="ja-text">日本語</div>
+      <input type="text" id="en-input" placeholder="英語を入力してEnter" autocomplete="off" autocorrect="off" autocapitalize="off">
+      <div id="feedback"></div>
+      <button id="next-btn" class="hidden">次へ</button>
+    </div>
+
+    <div id="result-screen" class="hidden">
+      <h2>テスト終了！</h2>
+      <p>正解数: <span id="score">0</span> / <span id="total-questions">0</span></p>
+      <div id="mistake-log-container" class="hidden">
+        <p>今回間違えた単語:</p>
+        <div id="mistake-log" class="mistake-list-display"></div>
+      </div>
+      <button id="back-to-menu-btn">メニューに戻る</button>
+    </div>
+  </div>
+
+  <script src="words.js"></script>
+
+  <script>
+    // 変数設定
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let currentMistakes = []; 
+    let savedMistakes = JSON.parse(localStorage.getItem("mistakeWords")) || []; 
+
+    // DOM要素の取得
+    const menuScreen = document.getElementById('menu-screen');
+    const playScreen = document.getElementById('play-screen');
+    const resultScreen = document.getElementById('result-screen');
+    
+    const startAllBtn = document.getElementById('start-all-btn');
+    const startMistakeBtn = document.getElementById('start-mistake-btn');
+    const clearMistakeBtn = document.getElementById('clear-mistake-btn');
+    const backToMenuBtn = document.getElementById('back-to-menu-btn');
+    const nextBtn = document.getElementById('next-btn');
+    
+    const enInput = document.getElementById('en-input');
+    const jaText = document.getElementById('ja-text');
+    const progressText = document.getElementById('progress');
+    const feedbackText = document.getElementById('feedback');
+    const mistakeCountSpan = document.getElementById('mistake-count');
+    
+    // 初期化処理
+    function initMenu() {
+      // words.js で定義された allWords を使う
+      if (typeof allWords !== 'undefined') {
+        document.getElementById('total-word-count').innerText = allWords.length;
+      } else {
+        document.getElementById('total-word-count').innerText = "エラー: words.jsが見つかりません";
+      }
+      
+      updateMistakeUI();
+      
+      menuScreen.classList.remove('hidden');
+      playScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+    }
+
+    function updateMistakeUI() {
+      mistakeCountSpan.innerText = savedMistakes.length;
+      if (savedMistakes.length > 0) {
+        startMistakeBtn.disabled = false;
+        clearMistakeBtn.classList.remove('hidden');
+      } else {
+        startMistakeBtn.disabled = true;
+        clearMistakeBtn.classList.add('hidden');
+      }
+    }
+
+    // ゲームの進行
+    function startGame(mode) {
+      if (mode === 'all') {
+        currentQuestions = [...allWords];
+      } else if (mode === 'mistake') {
+        currentQuestions = [...savedMistakes];
+      }
+      
+      // 単語の出題順をランダムにする
+      currentQuestions.sort(() => Math.random() - 0.5);
+
+      currentIndex = 0;
+      score = 0;
+      currentMistakes = [];
+      
+      menuScreen.classList.add('hidden');
+      playScreen.classList.remove('hidden');
+      
+      showQuestion();
+    }
+
+    function showQuestion() {
+      feedbackText.innerText = "";
+      enInput.value = "";
+      enInput.disabled = false;
+      nextBtn.classList.add('hidden');
+      
+      progressText.innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
+      jaText.innerText = currentQuestions[currentIndex].ja;
+      
+      enInput.focus();
+    }
+
+    // 判定処理
+    function checkAnswer() {
+      const userAnswer = enInput.value.trim().toLowerCase();
+      const correctAnswer = currentQuestions[currentIndex].en.toLowerCase();
+      
+      enInput.disabled = true;
+      
+      if (userAnswer === correctAnswer) {
+        feedbackText.innerHTML = "⭕ 正解！";
+        feedbackText.className = "correct";
+        score++;
+        
+        savedMistakes = savedMistakes.filter(w => w.en !== currentQuestions[currentIndex].en);
+        localStorage.setItem("mistakeWords", JSON.stringify(savedMistakes));
+        
+        setTimeout(nextQuestion, 500);
+      } else {
+        feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong>${currentQuestions[currentIndex].en}</strong>`;
+        feedbackText.className = "incorrect";
+        
+        const isAlreadyMistaken = savedMistakes.some(w => w.en === currentQuestions[currentIndex].en);
+        if (!isAlreadyMistaken) {
+          savedMistakes.push(currentQuestions[currentIndex]);
+          localStorage.setItem("mistakeWords", JSON.stringify(savedMistakes));
+        }
+        currentMistakes.push(currentQuestions[currentIndex]);
+        
+        nextBtn.classList.remove('hidden');
+        nextBtn.focus();
+      }
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < currentQuestions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      playScreen.classList.add('hidden');
+      resultScreen.classList.remove('hidden');
+      
+      document.getElementById('score').innerText = score;
+      document.getElementById('total-questions').innerText = currentQuestions.length;
+      
+      const mistakeLogContainer = document.getElementById('mistake-log-container');
+      const mistakeLog = document.getElementById('mistake-log');
+      
+      if (currentMistakes.length > 0) {
+        mistakeLogContainer.classList.remove('hidden');
+        mistakeLog.innerHTML = currentMistakes.map(w => `${w.ja} → <strong>${w.en}</strong>`).join('<br>');
+      } else {
+        mistakeLogContainer.classList.add('hidden');
+      }
+    }
+
+    // イベントリスナー
+    startAllBtn.addEventListener('click', () => startGame('all'));
+    startMistakeBtn.addEventListener('click', () => startGame('mistake'));
+    backToMenuBtn.addEventListener('click', initMenu);
+    nextBtn.addEventListener('click', nextQuestion);
+    
+    clearMistakeBtn.addEventListener('click', () => {
+      if(confirm('間違いリストをすべてリセットしてもいい？')) {
+        savedMistakes = [];
+        localStorage.removeItem("mistakeWords");
+        updateMistakeUI();
+      }
+    });
+
+    enInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        if(enInput.value.trim() !== "") {
+          checkAnswer();
+        }
+      }
+    });
+
+    // 初期化実行（少し待ってから実行してwords.jsの読み込み完了を確実にする）
+    window.onload = () => {
+      initMenu();
+    };
+  </script>
+</body>
+</html>
