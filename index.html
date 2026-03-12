@@ -138,7 +138,6 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
-    /* 入力欄のズレ解消レイアウト */
     .input-wrapper {
       position: relative;
       width: 100%;
@@ -397,16 +396,21 @@
       outline: none;
     }
 
-    /* ＝＝＝ 印刷用のスタイル ＝＝＝ */
+    /* ＝＝＝ 印刷用のスタイル（約75%サイズに縮小！） ＝＝＝ */
     #print-area {
       display: none;
     }
 
     @media print {
+
+      /* 背景やアプリ本体を隠す */
       body {
         background: white !important;
         color: black !important;
         display: block;
+        font-size: 11px;
+        margin: 0;
+        padding: 0;
       }
 
       #app-container {
@@ -418,59 +422,69 @@
         width: 100%;
       }
 
+      /* タイトル周りのサイズ調整 */
       .print-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
       }
 
       .print-title {
-        font-size: 24px;
+        font-size: 18px;
         font-weight: bold;
-        border-bottom: 2px solid #000;
-        padding-bottom: 5px;
+        border-bottom: 1.5px solid #000;
+        padding-bottom: 3px;
       }
 
       .print-info {
-        font-size: 16px;
+        font-size: 12px;
       }
 
+      /* テーブルのサイズ調整（余白やフォントを小さく） */
       .print-flex-container {
         display: flex;
         justify-content: space-between;
       }
 
       .print-table {
-        width: 48%;
+        width: 49%;
         border-collapse: collapse;
       }
 
       .print-table th,
       .print-table td {
         border: 1px solid #000;
-        padding: 8px;
-        font-size: 14px;
+        padding: 4px;
+        font-size: 11px;
         color: black;
       }
 
       .print-table th {
         background-color: #f0f0f0;
         color: black;
+        font-size: 12px;
       }
 
+      /* 各列の幅 */
       .print-table td:first-child {
         text-align: center;
-        width: 8%;
+        width: 6%;
       }
 
+      /* No */
       .print-table td:nth-child(2) {
-        width: 46%;
+        width: 47%;
       }
 
+      /* 日本語 */
       .print-table td:nth-child(3) {
-        width: 46%;
+        width: 47%;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
       }
+
+      /* 英語（解答欄） */
     }
   </style>
 </head>
@@ -487,7 +501,6 @@
       <button id="start-all-btn" class="btn-primary">▶ 全単語でスタート</button>
       <button id="start-mistake-btn" class="btn-warning" disabled>🔥 間違いリストでスタート (<span
           id="mistake-count">0</span>)</button>
-
       <button id="start-sparta-btn" class="btn-sparta">☠️ スパルタモード (順番通り・1ミスで終了)</button>
 
       <div class="options-card">
@@ -512,6 +525,11 @@
           <option value="normal">順番： 順番通り</option>
           <option value="random">順番： ランダム (本番対策！)</option>
         </select>
+        <label
+          style="display: flex; align-items: center; justify-content: center; cursor: pointer; color: #ffffff; margin: 10px 0;">
+          <input type="checkbox" id="print-answers-toggle" style="width: 20px; height: 20px; margin-right: 10px;">
+          解答も一緒に印刷する
+        </label>
         <button id="print-btn" class="btn-secondary" style="margin-top:5px; border-color:#00f2fe; color:#00f2fe;">PDF保存
           / 印刷する</button>
       </div>
@@ -573,7 +591,7 @@
     let score = 0;
     let currentMistakes = [];
     let savedMistakes = JSON.parse(localStorage.getItem("mistakeWords")) || [];
-    let isSpartaMode = false; // ★ スパルタモード判定用フラグ
+    let isSpartaMode = false;
 
     const menuScreen = document.getElementById('menu-screen');
     const playScreen = document.getElementById('play-screen');
@@ -583,7 +601,7 @@
     const resumeBtn = document.getElementById('resume-btn');
     const startAllBtn = document.getElementById('start-all-btn');
     const startMistakeBtn = document.getElementById('start-mistake-btn');
-    const startSpartaBtn = document.getElementById('start-sparta-btn'); // スパルタボタン
+    const startSpartaBtn = document.getElementById('start-sparta-btn');
     const clearMistakeBtn = document.getElementById('clear-mistake-btn');
     const viewListBtn = document.getElementById('view-list-btn');
     const nextBtn = document.getElementById('next-btn');
@@ -601,8 +619,7 @@
     const backButtons = document.querySelectorAll('.back-to-menu-btn');
 
     function initMenu() {
-      isSpartaMode = false; // メニューに戻ったらフラグをリセット
-
+      isSpartaMode = false;
       if (typeof allWords !== 'undefined') {
         document.getElementById('total-word-count').innerText = allWords.length;
       } else {
@@ -654,7 +671,6 @@
     }
 
     function saveSession() {
-      // スパルタモード中はセーブしない（途中で辞めたらアウト）
       if (!isSpartaMode && currentQuestions.length > 0 && currentIndex < currentQuestions.length) {
         localStorage.setItem('savedSession', JSON.stringify({
           questions: currentQuestions, index: currentIndex, score: score, mistakes: currentMistakes
@@ -663,7 +679,7 @@
     }
 
     function startGame(mode) {
-      isSpartaMode = (mode === 'sparta'); // スパルタモード判定
+      isSpartaMode = (mode === 'sparta');
 
       if (mode === 'resume') {
         const session = JSON.parse(localStorage.getItem('savedSession'));
@@ -672,7 +688,6 @@
           score = session.score; currentMistakes = session.mistakes;
         }
       } else {
-        // 通常のスタート（またはスパルタ）で途中データがある場合は警告
         if (localStorage.getItem('savedSession')) {
           if (!confirm('保存されている途中のデータはリセットされますが、最初からスタートしますか？')) return;
         }
@@ -683,7 +698,6 @@
           currentQuestions = [...savedMistakes];
         }
 
-        // スパルタモードの時は設定を無視して「順番通り」を強制
         if (mode !== 'sparta' && playOrderSelect.value === 'random') {
           currentQuestions.sort(() => Math.random() - 0.5);
         }
@@ -702,26 +716,21 @@
 
     function updateVisualText() {
       if (!currentQuestions[currentIndex]) return;
-
       const targetStr = currentQuestions[currentIndex].en;
       const typedStr = enInput.value;
       const isTracing = tracingToggle.checked;
       const isFocused = document.activeElement === enInput && !enInput.disabled;
 
       let html = "";
-
       if (typedStr === "" && !isTracing && !isFocused) {
         html = `<span class="placeholder-part">英語を入力 (Enterで判定)</span>`;
       } else {
         html += `<span class="typed-part">${typedStr}</span>`;
-        if (isFocused) {
-          html += `<span class="fake-cursor"></span>`;
-        }
+        if (isFocused) html += `<span class="fake-cursor"></span>`;
         if (isTracing && targetStr.length > typedStr.length) {
           html += `<span class="ghost-part">${targetStr.substring(typedStr.length)}</span>`;
         }
       }
-
       visualText.innerHTML = html;
     }
 
@@ -730,10 +739,8 @@
       feedbackText.innerText = ""; feedbackText.className = ""; enInput.value = ""; enInput.disabled = false;
       nextBtn.classList.add('hidden');
 
-      // スパルタモード中はプログレスバーにドクロを表示
       const progressPrefix = isSpartaMode ? "☠️ スパルタ " : "問題 ";
       progressText.innerText = `${progressPrefix}${currentIndex + 1} / ${currentQuestions.length}`;
-
       jaText.innerText = currentQuestions[currentIndex].ja;
 
       updateVisualText();
@@ -750,7 +757,6 @@
 
       if (userAnswer === correctAnswer) {
         feedbackText.innerHTML = "⭕ 正解！"; feedbackText.className = "correct"; score++;
-
         if (!isTracing) {
           savedMistakes = savedMistakes.filter(w => w.en !== currentQuestions[currentIndex].en);
           localStorage.setItem("mistakeWords", JSON.stringify(savedMistakes));
@@ -769,17 +775,10 @@
           currentMistakes.push(currentQuestions[currentIndex]);
         }
 
-        // ★ スパルタモードの時の特別処理
         if (isSpartaMode) {
           feedbackText.innerHTML += `<br><span class="sparta-alert">☠️ スパルタ発動！最初からやり直し！</span>`;
-          // 2秒間正解を見せたあと、強制的に1番に戻る
-          setTimeout(() => {
-            currentIndex = 0;
-            score = 0;
-            showQuestion();
-          }, 2000);
+          setTimeout(() => { currentIndex = 0; score = 0; showQuestion(); }, 2000);
         } else {
-          // 通常モードは「次へ」ボタンで進む
           nextBtn.classList.remove('hidden'); nextBtn.focus();
         }
       }
@@ -810,9 +809,11 @@
       }
     }
 
+    // ★ 印刷処理のアップデート（解答あり/なし ＆ コンパクト化）
     printBtn.addEventListener('click', () => {
       const scope = document.getElementById('print-scope').value;
       const order = document.getElementById('print-order').value;
+      const showAnswers = document.getElementById('print-answers-toggle').checked; // ★ 解答表示のチェックを取得
       let targetWords = scope === 'all' ? [...allWords] : [...savedMistakes];
 
       if (targetWords.length === 0) {
@@ -823,24 +824,31 @@
       if (order === 'random') targetWords.sort(() => Math.random() - 0.5);
 
       const printArea = document.getElementById('print-area');
+      // タイトルに「【解答】」を付けるかどうかの判定を追加
       let html = `
         <div class="print-header">
-          <div class="print-title">単語コンクール 対策テスト ${order === 'random' ? '(ランダム)' : ''}</div>
+          <div class="print-title">単語コンクール 対策テスト ${order === 'random' ? '(ランダム)' : ''} ${showAnswers ? '【解答】' : ''}</div>
           <div class="print-info">Class ___ No. ___ Name ____________________ &nbsp;&nbsp;&nbsp;&nbsp; / ${targetWords.length} 点</div>
         </div>
         <div class="print-flex-container">
       `;
 
       const halfLength = Math.ceil(targetWords.length / 2);
+
+      // 1列目
       html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>英語</th></tr></thead><tbody>`;
       for (let i = 0; i < halfLength; i++) {
-        html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td></td></tr>`;
+        // ★ チェックが入っていれば英語を入れ、入っていなければ空欄にする
+        const answerText = showAnswers ? targetWords[i].en : '';
+        html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td>${answerText}</td></tr>`;
       }
       html += `</tbody></table>`;
 
+      // 2列目
       html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>英語</th></tr></thead><tbody>`;
       for (let i = halfLength; i < targetWords.length; i++) {
-        html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td></td></tr>`;
+        const answerText = showAnswers ? targetWords[i].en : '';
+        html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td>${answerText}</td></tr>`;
       }
       html += `</tbody></table></div>`;
 
@@ -851,7 +859,7 @@
     resumeBtn.addEventListener('click', () => startGame('resume'));
     startAllBtn.addEventListener('click', () => startGame('all'));
     startMistakeBtn.addEventListener('click', () => startGame('mistake'));
-    startSpartaBtn.addEventListener('click', () => startGame('sparta')); // ★ スパルタボタンのイベント
+    startSpartaBtn.addEventListener('click', () => startGame('sparta'));
     viewListBtn.addEventListener('click', showWordList);
     nextBtn.addEventListener('click', nextQuestion);
 
