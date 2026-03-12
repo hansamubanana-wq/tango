@@ -132,59 +132,91 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
-    /* 入力欄となぞり書きの重なり調整 */
+    /* 入力欄のズレ解消・魔法のレイアウト */
     .input-wrapper {
       position: relative;
       width: 100%;
       margin-bottom: 20px;
-      background-color: #1a1f2b;
-      border-radius: 12px;
     }
 
-    .ghost-text {
+    .visual-text {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      padding: 18px;
-      font-size: 1.4rem;
-      color: rgba(255, 255, 255, 0.2);
-      /* うっすらグレー */
+      display: flex;
+      align-items: center;
+      justify-content: center;
       pointer-events: none;
-      text-align: center;
+      /* クリックは下のinputを貫通させる */
+      z-index: 2;
+      font-size: 1.4rem;
       font-family: 'Courier New', Consolas, monospace;
+      /* 幅が揃うフォント */
       letter-spacing: 1px;
-      box-sizing: border-box;
-      border: 2px solid transparent;
-      z-index: 1;
       white-space: pre;
       /* スペースをそのまま表示 */
-      overflow: hidden;
     }
 
+    .typed-part {
+      color: #00f2fe;
+    }
+
+    .ghost-part {
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    .placeholder-part {
+      color: #777;
+    }
+
+    /* ニセモノの点滅カーソル */
+    .fake-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.4rem;
+      background-color: #00f2fe;
+      animation: blink 1s step-end infinite;
+      margin: 0 1px;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* 本物の入力欄は見えなくする（でも機能は生きている） */
     input[type="text"] {
       width: 100%;
       padding: 18px;
       font-size: 1.4rem;
+      font-family: 'Courier New', Consolas, monospace;
+      letter-spacing: 1px;
       border: 2px solid #555;
       border-radius: 12px;
       box-sizing: border-box;
       outline: none;
       transition: all 0.3s;
-      text-align: center;
-      background-color: transparent;
-      color: #00f2fe;
-      font-family: 'Courier New', Consolas, monospace;
-      letter-spacing: 1px;
+      background-color: #1a1f2b;
+      color: transparent;
+      /* 入力した文字を透明にする */
+      caret-color: transparent;
+      /* 本物のカーソルを透明にする */
       position: relative;
-      z-index: 2;
+      z-index: 1;
     }
 
     input[type="text"]:focus {
       border-color: #00f2fe;
       box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
-      background-color: transparent;
     }
 
     #feedback {
@@ -326,7 +358,7 @@
       width: 45%;
     }
 
-    /* 設定エリアのカード（印刷・なぞり書き共通） */
+    /* 設定エリアのカード */
     .options-card {
       background: rgba(0, 0, 0, 0.2);
       padding: 15px;
@@ -495,7 +527,7 @@
       <div id="ja-text">日本語</div>
 
       <div class="input-wrapper">
-        <div id="ghost-text" class="ghost-text"></div>
+        <div id="visual-text" class="visual-text"></div>
         <input type="text" id="en-input" autocomplete="off" spellcheck="false">
       </div>
 
@@ -541,7 +573,7 @@
     const printBtn = document.getElementById('print-btn');
 
     const enInput = document.getElementById('en-input');
-    const ghostText = document.getElementById('ghost-text');
+    const visualText = document.getElementById('visual-text');
     const jaText = document.getElementById('ja-text');
     const progressText = document.getElementById('progress');
     const feedbackText = document.getElementById('feedback');
@@ -590,7 +622,6 @@
     function showWordList() {
       const tbody = document.getElementById('word-list-tbody');
       tbody.innerHTML = '';
-
       if (typeof allWords !== 'undefined') {
         allWords.forEach((word, index) => {
           const tr = document.createElement('tr');
@@ -598,7 +629,6 @@
           tbody.appendChild(tr);
         });
       }
-
       menuScreen.classList.add('hidden');
       wordListScreen.classList.remove('hidden');
     }
@@ -641,22 +671,36 @@
       showQuestion();
     }
 
-    // なぞり書きの表示を更新する関数
-    function updateGhostText() {
-      const isTracing = tracingToggle.checked;
-      if (!isTracing || !currentQuestions[currentIndex]) {
-        ghostText.innerHTML = "";
-        return;
-      }
+    // ★ ズレ解消の要：表示用の文字を組み立てる関数 ★
+    function updateVisualText() {
+      if (!currentQuestions[currentIndex]) return;
 
       const targetStr = currentQuestions[currentIndex].en;
       const typedStr = enInput.value;
+      const isTracing = tracingToggle.checked;
+      const isFocused = document.activeElement === enInput && !enInput.disabled;
 
-      // 入力した文字数分だけを透明にして隠し、残りを表示する
-      const hiddenPart = targetStr.substring(0, typedStr.length);
-      const visiblePart = targetStr.substring(typedStr.length);
+      let html = "";
 
-      ghostText.innerHTML = `<span style="opacity: 0;">${hiddenPart}</span>${visiblePart}`;
+      // 何も入力されていなくて、なぞり書きもオフで、フォーカスも外れている時はプレースホルダーを表示
+      if (typedStr === "" && !isTracing && !isFocused) {
+        html = `<span class="placeholder-part">英語を入力 (Enterで判定)</span>`;
+      } else {
+        // 1. 自分が入力した文字（水色）
+        html += `<span class="typed-part">${typedStr}</span>`;
+
+        // 2. 点滅するカーソル（入力中のみ表示）
+        if (isFocused) {
+          html += `<span class="fake-cursor"></span>`;
+        }
+
+        // 3. なぞり書き用の灰色の文字（まだ入力していない残りの部分）
+        if (isTracing && targetStr.length > typedStr.length) {
+          html += `<span class="ghost-part">${targetStr.substring(typedStr.length)}</span>`;
+        }
+      }
+
+      visualText.innerHTML = html;
     }
 
     function showQuestion() {
@@ -666,9 +710,7 @@
       progressText.innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
       jaText.innerText = currentQuestions[currentIndex].ja;
 
-      const isTracing = tracingToggle.checked;
-      enInput.placeholder = isTracing ? "" : "英語を入力 (Enterで判定)";
-      updateGhostText(); // 最初の表示をセット
+      updateVisualText(); // 画面更新
 
       setTimeout(() => enInput.focus(), 50);
     }
@@ -676,14 +718,14 @@
     function checkAnswer() {
       const userAnswer = enInput.value.trim().toLowerCase();
       const correctAnswer = currentQuestions[currentIndex].en.toLowerCase();
-      const isTracing = tracingToggle.checked; // なぞり書きモードの確認
+      const isTracing = tracingToggle.checked;
 
       enInput.disabled = true;
+      updateVisualText(); // disabledになったのでカーソルを消すために更新
 
       if (userAnswer === correctAnswer) {
         feedbackText.innerHTML = "⭕ 正解！"; feedbackText.className = "correct"; score++;
 
-        // なぞり書きモードじゃない時だけ間違いリストから消す
         if (!isTracing) {
           savedMistakes = savedMistakes.filter(w => w.en !== currentQuestions[currentIndex].en);
           localStorage.setItem("mistakeWords", JSON.stringify(savedMistakes));
@@ -693,7 +735,6 @@
         feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong class="correct-word">${currentQuestions[currentIndex].en}</strong>`;
         feedbackText.className = "incorrect";
 
-        // なぞり書きモードじゃない時だけ間違いリストに登録する
         if (!isTracing) {
           const isAlreadyMistaken = savedMistakes.some(w => w.en === currentQuestions[currentIndex].en);
           if (!isAlreadyMistaken) {
@@ -783,21 +824,18 @@
       }
     });
 
-    // 文字を入力するたびに、なぞり書きの表示を更新する
-    enInput.addEventListener('input', updateGhostText);
+    // 入力やフォーカスが変化するたびに画面を再描画する
+    enInput.addEventListener('input', updateVisualText);
+    enInput.addEventListener('focus', updateVisualText);
+    enInput.addEventListener('blur', updateVisualText);
+    tracingToggle.addEventListener('change', updateVisualText);
 
     enInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter' && enInput.value.trim() !== "") checkAnswer();
-    });
-
-    // なぞり書きモードを切り替えた時の動作
-    tracingToggle.addEventListener('change', () => {
-      enInput.placeholder = tracingToggle.checked ? "" : "英語を入力 (Enterで判定)";
-      updateGhostText();
     });
 
     window.onload = () => { initMenu(); };
   </script>
 </body>
 
-</html>
+</html>ｘ
