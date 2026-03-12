@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>単語コンクール対策アプリ</title>
   <style>
-    /* ＝＝＝ ダークモードのスタイル ＝＝＝ */
+    /* ＝＝＝ ダークモードのスタイル（画面表示用） ＝＝＝ */
     body {
       font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
       background: linear-gradient(135deg, #141e30 0%, #243b55 100%);
@@ -25,17 +26,23 @@
       max-width: 550px;
       padding: 40px 30px;
       border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
       text-align: center;
-      /* Safari用のプレフィックスを追加（赤いエラー解消） */
       -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
       animation: fadeIn 0.5s ease-out;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     h1 {
@@ -45,7 +52,7 @@
       letter-spacing: 1px;
       text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
     }
-    
+
     h2 {
       color: #4facfe;
     }
@@ -53,7 +60,7 @@
     .hidden {
       display: none !important;
     }
-    
+
     /* ＝＝＝ ボタンのスタイル ＝＝＝ */
     button {
       border: none;
@@ -65,25 +72,49 @@
       cursor: pointer;
       width: 100%;
       color: white;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
     }
-    
+
     button:hover:not(:disabled) {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     }
-    
+
     button:active:not(:disabled) {
       transform: translateY(1px);
     }
 
-    .btn-primary { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #000; }
-    .btn-secondary { background: linear-gradient(135deg, #434343 0%, #000000 100%); border: 1px solid #555; }
-    .btn-warning { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); color: #000; }
-    .btn-danger { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
-    .btn-interrupt { margin-top: 30px; font-size: 0.9rem; padding: 10px; }
-    
+    .btn-primary {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: #000;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: #000;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #434343 0%, #000000 100%);
+      border: 1px solid #555;
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      color: #000;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+    }
+
+    .btn-interrupt {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      padding: 10px;
+    }
+
     button:disabled {
       background: #333;
       color: #777;
@@ -98,9 +129,9 @@
       font-weight: bold;
       margin: 25px 0;
       color: #ffffff;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
-    
+
     input[type="text"] {
       width: 100%;
       padding: 18px;
@@ -115,32 +146,65 @@
       background-color: #1a1f2b;
       color: #00f2fe;
     }
-    
+
     input[type="text"]:focus {
       border-color: #00f2fe;
       background-color: #242c3d;
       box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
     }
-    
+
     #feedback {
       font-size: 1.3rem;
       font-weight: bold;
       min-height: 35px;
       margin-bottom: 20px;
     }
-    .correct { color: #00e676; animation: pop 0.3s ease; text-shadow: 0 0 8px rgba(0,230,118,0.5); }
-    .incorrect { color: #ff5252; animation: shake 0.4s ease; text-shadow: 0 0 8px rgba(255,82,82,0.5); }
-    .correct-word { font-size: 1.5rem; color: #00f2fe; }
+
+    .correct {
+      color: #00e676;
+      animation: pop 0.3s ease;
+      text-shadow: 0 0 8px rgba(0, 230, 118, 0.5);
+    }
+
+    .incorrect {
+      color: #ff5252;
+      animation: shake 0.4s ease;
+      text-shadow: 0 0 8px rgba(255, 82, 82, 0.5);
+    }
+
+    .correct-word {
+      font-size: 1.5rem;
+      color: #00f2fe;
+    }
 
     @keyframes pop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
+
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-5px);
+      }
+
+      75% {
+        transform: translateX(5px);
+      }
     }
 
     #progress {
@@ -150,14 +214,41 @@
       margin-bottom: 10px;
     }
 
-    /* ＝＝＝ 単語一覧・結果画面のスタイル（インラインスタイルをここに移動） ＝＝＝ */
-    .menu-stats-text { color: #9ba4b5; font-weight: bold; }
-    #total-word-count { color: #ffffff; font-size: 1.2rem; }
-    .result-score-text { font-size: 1.2rem; font-weight: bold; }
-    #score { color: #00e676; font-size: 1.5rem; }
-    .mistake-log-title { color: #ff5252; font-weight: bold; }
-    .mistake-word { color: #00f2fe; }
-    .mistake-separator { border: 0; border-bottom: 1px solid #333; margin: 8px 0; }
+    /* ＝＝＝ メニュー・結果画面のスタイル ＝＝＝ */
+    .menu-stats-text {
+      color: #9ba4b5;
+      font-weight: bold;
+    }
+
+    #total-word-count {
+      color: #ffffff;
+      font-size: 1.2rem;
+    }
+
+    .result-score-text {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    #score {
+      color: #00e676;
+      font-size: 1.5rem;
+    }
+
+    .mistake-log-title {
+      color: #ff5252;
+      font-weight: bold;
+    }
+
+    .mistake-word {
+      color: #00f2fe;
+    }
+
+    .mistake-separator {
+      border: 0;
+      border-bottom: 1px solid #333;
+      margin: 8px 0;
+    }
 
     .scroll-box {
       background: #1a1f2b;
@@ -175,20 +266,145 @@
       width: 100%;
       border-collapse: collapse;
     }
-    th, td {
+
+    th,
+    td {
       padding: 10px;
       border-bottom: 1px solid #333;
     }
+
     th {
       background-color: #242c3d;
       color: #4facfe;
       position: sticky;
       top: 0;
     }
-    td:first-child { font-weight: bold; color: #777; width: 10%; }
-    td:nth-child(2) { font-weight: bold; color: #00f2fe; width: 45%; }
+
+    td:first-child {
+      font-weight: bold;
+      color: #777;
+      width: 10%;
+    }
+
+    td:nth-child(2) {
+      font-weight: bold;
+      color: #00f2fe;
+      width: 45%;
+    }
+
+    /* 印刷オプションのカード */
+    .print-options-card {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 25px;
+      border: 1px dashed #555;
+      text-align: left;
+    }
+
+    .print-options-card h3 {
+      color: #00f2fe;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    .select-style {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      background: #1a1f2b;
+      color: #ffffff;
+      border: 1px solid #555;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    /* ＝＝＝ 印刷用のスタイル（紙に印刷される時だけ適用される） ＝＝＝ */
+    #print-area {
+      display: none;
+    }
+
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        display: block;
+      }
+
+      #app-container {
+        display: none !important;
+      }
+
+      /* アプリの画面は隠す */
+      #print-area {
+        display: block !important;
+        width: 100%;
+      }
+
+      /* 印刷エリアだけ表示 */
+
+      .print-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 20px;
+      }
+
+      .print-title {
+        font-size: 24px;
+        font-weight: bold;
+        border-bottom: 2px solid #000;
+        padding-bottom: 5px;
+      }
+
+      .print-info {
+        font-size: 16px;
+      }
+
+      .print-flex-container {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .print-table {
+        width: 48%;
+        border-collapse: collapse;
+      }
+
+      .print-table th,
+      .print-table td {
+        border: 1px solid #000;
+        padding: 8px;
+        font-size: 14px;
+        color: black;
+      }
+
+      .print-table th {
+        background-color: #f0f0f0;
+        color: black;
+      }
+
+      .print-table td:first-child {
+        text-align: center;
+        width: 8%;
+      }
+
+      .print-table td:nth-child(2) {
+        width: 46%;
+      }
+
+      .print-table td:nth-child(3) {
+        width: 46%;
+      }
+
+      /* 書き込み用の空白セル */
+    }
   </style>
 </head>
+
 <body>
 
   <div class="container" id="app-container">
@@ -196,11 +412,28 @@
 
     <div id="menu-screen">
       <p class="menu-stats-text">収録単語数: <span id="total-word-count">0</span> 語</p>
-      
+
+      <button id="resume-btn" class="btn-success hidden">▶ 続きから再開</button>
       <button id="start-all-btn" class="btn-primary">▶ 全単語でスタート</button>
-      <button id="start-mistake-btn" class="btn-warning" disabled>🔥 間違いリストでスタート (<span id="mistake-count">0</span>)</button>
+      <button id="start-mistake-btn" class="btn-warning" disabled>🔥 間違いリストでスタート (<span
+          id="mistake-count">0</span>)</button>
       <button id="view-list-btn" class="btn-secondary">📖 全単語一覧を見る</button>
-      <button id="clear-mistake-btn" class="btn-danger hidden">🗑 間違いリストをリセット</button>
+
+      <div class="print-options-card">
+        <h3>🖨️ テスト用紙を印刷</h3>
+        <select id="print-scope" class="select-style">
+          <option value="all">出題範囲： 全単語</option>
+          <option value="mistake">出題範囲： 間違いリストのみ</option>
+        </select>
+        <select id="print-order" class="select-style">
+          <option value="normal">順番： 順番通り</option>
+          <option value="random">順番： ランダム (本番対策！)</option>
+        </select>
+        <button id="print-btn" class="btn-secondary" style="margin-top:5px; border-color:#00f2fe; color:#00f2fe;">PDF保存
+          / 印刷する</button>
+      </div>
+
+      <button id="clear-mistake-btn" class="btn-danger hidden" style="margin-top:20px;">🗑 間違いリストをリセット</button>
     </div>
 
     <div id="word-list-screen" class="hidden">
@@ -214,8 +447,7 @@
               <th>日本語</th>
             </tr>
           </thead>
-          <tbody id="word-list-tbody">
-            </tbody>
+          <tbody id="word-list-tbody"></tbody>
         </table>
       </div>
       <button class="btn-secondary back-to-menu-btn">戻る</button>
@@ -233,7 +465,7 @@
     <div id="result-screen" class="hidden">
       <h2>🎉 テスト終了！</h2>
       <p class="result-score-text">正解数: <span id="score">0</span> / <span id="total-questions">0</span></p>
-      
+
       <div id="mistake-log-container" class="hidden">
         <p class="mistake-log-title">今回間違えた単語:</p>
         <div id="mistake-log" class="scroll-box"></div>
@@ -242,6 +474,8 @@
     </div>
   </div>
 
+  <div id="print-area"></div>
+
   <script src="words.js"></script>
 
   <script>
@@ -249,27 +483,29 @@
     let currentQuestions = [];
     let currentIndex = 0;
     let score = 0;
-    let currentMistakes = []; 
-    let savedMistakes = JSON.parse(localStorage.getItem("mistakeWords")) || []; 
+    let currentMistakes = [];
+    let savedMistakes = JSON.parse(localStorage.getItem("mistakeWords")) || [];
 
     // DOM要素の取得
     const menuScreen = document.getElementById('menu-screen');
     const playScreen = document.getElementById('play-screen');
     const resultScreen = document.getElementById('result-screen');
     const wordListScreen = document.getElementById('word-list-screen');
-    
+
+    const resumeBtn = document.getElementById('resume-btn');
     const startAllBtn = document.getElementById('start-all-btn');
     const startMistakeBtn = document.getElementById('start-mistake-btn');
     const clearMistakeBtn = document.getElementById('clear-mistake-btn');
     const viewListBtn = document.getElementById('view-list-btn');
     const nextBtn = document.getElementById('next-btn');
-    
+    const printBtn = document.getElementById('print-btn');
+
     const enInput = document.getElementById('en-input');
     const jaText = document.getElementById('ja-text');
     const progressText = document.getElementById('progress');
     const feedbackText = document.getElementById('feedback');
     const mistakeCountSpan = document.getElementById('mistake-count');
-    
+
     const backButtons = document.querySelectorAll('.back-to-menu-btn');
 
     // 初期化処理
@@ -279,9 +515,17 @@
       } else {
         document.getElementById('total-word-count').innerText = "エラー: words.jsが見つかりません";
       }
-      
+
       updateMistakeUI();
-      
+
+      const session = JSON.parse(localStorage.getItem('savedSession'));
+      if (session && session.index > 0 && session.index < session.questions.length) {
+        resumeBtn.classList.remove('hidden');
+        resumeBtn.innerText = `▶ 続きから再開 (${session.index + 1}問目から)`;
+      } else {
+        resumeBtn.classList.add('hidden');
+      }
+
       document.getElementById('app-container').style.animation = 'none';
       setTimeout(() => document.getElementById('app-container').style.animation = 'fadeIn 0.5s ease-out', 10);
 
@@ -306,15 +550,11 @@
     function showWordList() {
       const tbody = document.getElementById('word-list-tbody');
       tbody.innerHTML = '';
-      
+
       if (typeof allWords !== 'undefined') {
         allWords.forEach((word, index) => {
           const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${word.en}</td>
-            <td>${word.ja}</td>
-          `;
+          tr.innerHTML = `<td>${index + 1}</td><td>${word.en}</td><td>${word.ja}</td>`;
           tbody.appendChild(tr);
         });
       }
@@ -323,39 +563,52 @@
       wordListScreen.classList.remove('hidden');
     }
 
+    // セーブ機能
+    function saveSession() {
+      if (currentQuestions.length > 0 && currentIndex < currentQuestions.length) {
+        localStorage.setItem('savedSession', JSON.stringify({
+          questions: currentQuestions, index: currentIndex, score: score, mistakes: currentMistakes
+        }));
+      }
+    }
+
     // ゲーム進行
     function startGame(mode) {
-      if (mode === 'all') {
-        currentQuestions = [...allWords];
-      } else if (mode === 'mistake') {
-        currentQuestions = [...savedMistakes];
-      }
-      
-      currentQuestions.sort(() => Math.random() - 0.5);
+      if (mode === 'resume') {
+        const session = JSON.parse(localStorage.getItem('savedSession'));
+        if (session) {
+          currentQuestions = session.questions; currentIndex = session.index;
+          score = session.score; currentMistakes = session.mistakes;
+        }
+      } else {
+        if (localStorage.getItem('savedSession')) {
+          if (!confirm('保存されている途中のデータはリセットされますが、最初からスタートしますか？')) return;
+        }
 
-      currentIndex = 0;
-      score = 0;
-      currentMistakes = [];
-      
+        if (mode === 'all') {
+          currentQuestions = [...allWords];
+        } else if (mode === 'mistake') {
+          currentQuestions = [...savedMistakes];
+        }
+        currentQuestions.sort(() => Math.random() - 0.5);
+        currentIndex = 0; score = 0; currentMistakes = [];
+        localStorage.removeItem('savedSession');
+      }
+
       document.getElementById('app-container').style.animation = 'none';
       setTimeout(() => document.getElementById('app-container').style.animation = 'fadeIn 0.4s ease-out', 10);
 
       menuScreen.classList.add('hidden');
       playScreen.classList.remove('hidden');
-      
       showQuestion();
     }
 
     function showQuestion() {
-      feedbackText.innerText = "";
-      feedbackText.className = "";
-      enInput.value = "";
-      enInput.disabled = false;
+      saveSession();
+      feedbackText.innerText = ""; feedbackText.className = ""; enInput.value = ""; enInput.disabled = false;
       nextBtn.classList.add('hidden');
-      
       progressText.innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
       jaText.innerText = currentQuestions[currentIndex].ja;
-      
       setTimeout(() => enInput.focus(), 50);
     }
 
@@ -363,56 +616,44 @@
     function checkAnswer() {
       const userAnswer = enInput.value.trim().toLowerCase();
       const correctAnswer = currentQuestions[currentIndex].en.toLowerCase();
-      
       enInput.disabled = true;
-      
+
       if (userAnswer === correctAnswer) {
-        feedbackText.innerHTML = "⭕ 正解！";
-        feedbackText.className = "correct";
-        score++;
-        
+        feedbackText.innerHTML = "⭕ 正解！"; feedbackText.className = "correct"; score++;
         savedMistakes = savedMistakes.filter(w => w.en !== currentQuestions[currentIndex].en);
         localStorage.setItem("mistakeWords", JSON.stringify(savedMistakes));
-        
         setTimeout(nextQuestion, 600);
       } else {
         feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong class="correct-word">${currentQuestions[currentIndex].en}</strong>`;
         feedbackText.className = "incorrect";
-        
+
         const isAlreadyMistaken = savedMistakes.some(w => w.en === currentQuestions[currentIndex].en);
         if (!isAlreadyMistaken) {
           savedMistakes.push(currentQuestions[currentIndex]);
           localStorage.setItem("mistakeWords", JSON.stringify(savedMistakes));
         }
         currentMistakes.push(currentQuestions[currentIndex]);
-        
-        nextBtn.classList.remove('hidden');
-        nextBtn.focus();
+        nextBtn.classList.remove('hidden'); nextBtn.focus();
       }
     }
 
     function nextQuestion() {
       currentIndex++;
-      if (currentIndex < currentQuestions.length) {
-        showQuestion();
-      } else {
-        showResult();
-      }
+      if (currentIndex < currentQuestions.length) { showQuestion(); } else { showResult(); }
     }
 
     function showResult() {
+      localStorage.removeItem('savedSession');
       document.getElementById('app-container').style.animation = 'none';
       setTimeout(() => document.getElementById('app-container').style.animation = 'fadeIn 0.5s ease-out', 10);
 
-      playScreen.classList.add('hidden');
-      resultScreen.classList.remove('hidden');
-      
+      playScreen.classList.add('hidden'); resultScreen.classList.remove('hidden');
       document.getElementById('score').innerText = score;
       document.getElementById('total-questions').innerText = currentQuestions.length;
-      
+
       const mistakeLogContainer = document.getElementById('mistake-log-container');
       const mistakeLog = document.getElementById('mistake-log');
-      
+
       if (currentMistakes.length > 0) {
         mistakeLogContainer.classList.remove('hidden');
         mistakeLog.innerHTML = currentMistakes.map(w => `${w.ja} <br>→ <strong class="mistake-word">${w.en}</strong>`).join('<hr class="mistake-separator">');
@@ -421,34 +662,77 @@
       }
     }
 
+    // ＝＝＝ 印刷機能の処理 ＝＝＝
+    printBtn.addEventListener('click', () => {
+      const scope = document.getElementById('print-scope').value;
+      const order = document.getElementById('print-order').value;
+
+      // 印刷する単語の配列を作る
+      let targetWords = scope === 'all' ? [...allWords] : [...savedMistakes];
+
+      if (targetWords.length === 0) {
+        alert('印刷する単語がありません！（間違いリストが空です）');
+        return;
+      }
+
+      // ランダムが選ばれていたらシャッフル
+      if (order === 'random') {
+        targetWords.sort(() => Math.random() - 0.5);
+      }
+
+      // 印刷用のHTMLを組み立てる
+      const printArea = document.getElementById('print-area');
+      let html = `
+        <div class="print-header">
+          <div class="print-title">単語コンクール 対策テスト ${order === 'random' ? '(ランダム)' : ''}</div>
+          <div class="print-info">Class ___ No. ___ Name ____________________ &nbsp;&nbsp;&nbsp;&nbsp; / ${targetWords.length} 点</div>
+        </div>
+        <div class="print-flex-container">
+      `;
+
+      // 2列にするための計算
+      const halfLength = Math.ceil(targetWords.length / 2);
+
+      // 左側の列 (1列目)
+      html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>英語</th></tr></thead><tbody>`;
+      for (let i = 0; i < halfLength; i++) {
+        html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td></td></tr>`;
+      }
+      html += `</tbody></table>`;
+
+      // 右側の列 (2列目)
+      html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>英語</th></tr></thead><tbody>`;
+      for (let i = halfLength; i < targetWords.length; i++) {
+        html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td></td></tr>`;
+      }
+      html += `</tbody></table></div>`;
+
+      // 印刷エリアにHTMLを流し込んで、印刷ダイアログを呼び出す
+      printArea.innerHTML = html;
+      window.print();
+    });
+
+    // イベントリスナー
+    resumeBtn.addEventListener('click', () => startGame('resume'));
     startAllBtn.addEventListener('click', () => startGame('all'));
     startMistakeBtn.addEventListener('click', () => startGame('mistake'));
     viewListBtn.addEventListener('click', showWordList);
     nextBtn.addEventListener('click', nextQuestion);
-    
-    backButtons.forEach(btn => {
-      btn.addEventListener('click', initMenu);
-    });
-    
+
+    backButtons.forEach(btn => { btn.addEventListener('click', initMenu); });
+
     clearMistakeBtn.addEventListener('click', () => {
-      if(confirm('間違いリストをすべてリセットしてもいい？')) {
-        savedMistakes = [];
-        localStorage.removeItem("mistakeWords");
-        updateMistakeUI();
+      if (confirm('間違いリストをすべてリセットしてもいい？')) {
+        savedMistakes = []; localStorage.removeItem("mistakeWords"); updateMistakeUI();
       }
     });
 
     enInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        if(enInput.value.trim() !== "") {
-          checkAnswer();
-        }
-      }
+      if (e.key === 'Enter' && enInput.value.trim() !== "") checkAnswer();
     });
 
-    window.onload = () => {
-      initMenu();
-    };
+    window.onload = () => { initMenu(); };
   </script>
 </body>
+
 </html>
