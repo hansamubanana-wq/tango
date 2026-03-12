@@ -480,10 +480,14 @@
           id="mistake-count">0</span>)</button>
 
       <div class="options-card">
-        <h3 style="color: #4facfe;">✍️ なぞり書きモード</h3>
+        <h3 style="color: #4facfe;">🎮 プレイ設定</h3>
+        <select id="play-order" class="select-style" style="margin-bottom: 15px;">
+          <option value="random">出題順： ランダム (おすすめ！)</option>
+          <option value="normal">出題順： 順番通り</option>
+        </select>
         <label style="display: flex; align-items: center; justify-content: center; cursor: pointer; color: #ffffff;">
           <input type="checkbox" id="tracing-mode-toggle" style="width: 20px; height: 20px; margin-right: 10px;">
-          解答をうっすら表示 (練習用・間違いリスト更新なし)
+          なぞり書きモード (解答をうっすら表示)
         </label>
       </div>
 
@@ -579,6 +583,7 @@
     const feedbackText = document.getElementById('feedback');
     const mistakeCountSpan = document.getElementById('mistake-count');
     const tracingToggle = document.getElementById('tracing-mode-toggle');
+    const playOrderSelect = document.getElementById('play-order'); // 追加：プレイ設定のセレクト
 
     const backButtons = document.querySelectorAll('.back-to-menu-btn');
 
@@ -658,7 +663,12 @@
         } else if (mode === 'mistake') {
           currentQuestions = [...savedMistakes];
         }
-        currentQuestions.sort(() => Math.random() - 0.5);
+
+        // ★プレイ設定で「ランダム」が選ばれている時だけシャッフルする
+        if (playOrderSelect.value === 'random') {
+          currentQuestions.sort(() => Math.random() - 0.5);
+        }
+
         currentIndex = 0; score = 0; currentMistakes = [];
         localStorage.removeItem('savedSession');
       }
@@ -671,7 +681,6 @@
       showQuestion();
     }
 
-    // ★ ズレ解消の要：表示用の文字を組み立てる関数 ★
     function updateVisualText() {
       if (!currentQuestions[currentIndex]) return;
 
@@ -682,19 +691,13 @@
 
       let html = "";
 
-      // 何も入力されていなくて、なぞり書きもオフで、フォーカスも外れている時はプレースホルダーを表示
       if (typedStr === "" && !isTracing && !isFocused) {
         html = `<span class="placeholder-part">英語を入力 (Enterで判定)</span>`;
       } else {
-        // 1. 自分が入力した文字（水色）
         html += `<span class="typed-part">${typedStr}</span>`;
-
-        // 2. 点滅するカーソル（入力中のみ表示）
         if (isFocused) {
           html += `<span class="fake-cursor"></span>`;
         }
-
-        // 3. なぞり書き用の灰色の文字（まだ入力していない残りの部分）
         if (isTracing && targetStr.length > typedStr.length) {
           html += `<span class="ghost-part">${targetStr.substring(typedStr.length)}</span>`;
         }
@@ -710,7 +713,7 @@
       progressText.innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
       jaText.innerText = currentQuestions[currentIndex].ja;
 
-      updateVisualText(); // 画面更新
+      updateVisualText();
 
       setTimeout(() => enInput.focus(), 50);
     }
@@ -721,7 +724,7 @@
       const isTracing = tracingToggle.checked;
 
       enInput.disabled = true;
-      updateVisualText(); // disabledになったのでカーソルを消すために更新
+      updateVisualText();
 
       if (userAnswer === correctAnswer) {
         feedbackText.innerHTML = "⭕ 正解！"; feedbackText.className = "correct"; score++;
@@ -824,7 +827,6 @@
       }
     });
 
-    // 入力やフォーカスが変化するたびに画面を再描画する
     enInput.addEventListener('input', updateVisualText);
     enInput.addEventListener('focus', updateVisualText);
     enInput.addEventListener('blur', updateVisualText);
@@ -838,4 +840,4 @@
   </script>
 </body>
 
-</html>ｘ
+</html>
