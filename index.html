@@ -109,6 +109,12 @@
       background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
     }
 
+    .btn-sparta {
+      background: linear-gradient(135deg, #6b0f1a 0%, #2b0307 100%);
+      border: 1px solid #ff0844;
+      box-shadow: 0 0 15px rgba(255, 8, 68, 0.3);
+    }
+
     .btn-interrupt {
       margin-top: 30px;
       font-size: 0.9rem;
@@ -132,7 +138,7 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
-    /* 入力欄のズレ解消・魔法のレイアウト */
+    /* 入力欄のズレ解消レイアウト */
     .input-wrapper {
       position: relative;
       width: 100%;
@@ -149,14 +155,11 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      /* クリックは下のinputを貫通させる */
       z-index: 2;
       font-size: 1.4rem;
       font-family: 'Courier New', Consolas, monospace;
-      /* 幅が揃うフォント */
       letter-spacing: 1px;
       white-space: pre;
-      /* スペースをそのまま表示 */
     }
 
     .typed-part {
@@ -171,7 +174,6 @@
       color: #777;
     }
 
-    /* ニセモノの点滅カーソル */
     .fake-cursor {
       display: inline-block;
       width: 2px;
@@ -193,7 +195,6 @@
       }
     }
 
-    /* 本物の入力欄は見えなくする（でも機能は生きている） */
     input[type="text"] {
       width: 100%;
       padding: 18px;
@@ -207,9 +208,7 @@
       transition: all 0.3s;
       background-color: #1a1f2b;
       color: transparent;
-      /* 入力した文字を透明にする */
       caret-color: transparent;
-      /* 本物のカーソルを透明にする */
       position: relative;
       z-index: 1;
     }
@@ -241,6 +240,16 @@
     .correct-word {
       font-size: 1.5rem;
       color: #00f2fe;
+    }
+
+    .sparta-alert {
+      color: #ff0844;
+      font-size: 1.1rem;
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(255, 8, 68, 0.8);
+      animation: shake 0.4s;
     }
 
     @keyframes pop {
@@ -479,6 +488,8 @@
       <button id="start-mistake-btn" class="btn-warning" disabled>🔥 間違いリストでスタート (<span
           id="mistake-count">0</span>)</button>
 
+      <button id="start-sparta-btn" class="btn-sparta">☠️ スパルタモード (順番通り・1ミスで終了)</button>
+
       <div class="options-card">
         <h3 style="color: #4facfe;">🎮 プレイ設定</h3>
         <select id="play-order" class="select-style" style="margin-bottom: 15px;">
@@ -562,6 +573,7 @@
     let score = 0;
     let currentMistakes = [];
     let savedMistakes = JSON.parse(localStorage.getItem("mistakeWords")) || [];
+    let isSpartaMode = false; // ★ スパルタモード判定用フラグ
 
     const menuScreen = document.getElementById('menu-screen');
     const playScreen = document.getElementById('play-screen');
@@ -571,6 +583,7 @@
     const resumeBtn = document.getElementById('resume-btn');
     const startAllBtn = document.getElementById('start-all-btn');
     const startMistakeBtn = document.getElementById('start-mistake-btn');
+    const startSpartaBtn = document.getElementById('start-sparta-btn'); // スパルタボタン
     const clearMistakeBtn = document.getElementById('clear-mistake-btn');
     const viewListBtn = document.getElementById('view-list-btn');
     const nextBtn = document.getElementById('next-btn');
@@ -583,11 +596,13 @@
     const feedbackText = document.getElementById('feedback');
     const mistakeCountSpan = document.getElementById('mistake-count');
     const tracingToggle = document.getElementById('tracing-mode-toggle');
-    const playOrderSelect = document.getElementById('play-order'); // 追加：プレイ設定のセレクト
+    const playOrderSelect = document.getElementById('play-order');
 
     const backButtons = document.querySelectorAll('.back-to-menu-btn');
 
     function initMenu() {
+      isSpartaMode = false; // メニューに戻ったらフラグをリセット
+
       if (typeof allWords !== 'undefined') {
         document.getElementById('total-word-count').innerText = allWords.length;
       } else {
@@ -639,7 +654,8 @@
     }
 
     function saveSession() {
-      if (currentQuestions.length > 0 && currentIndex < currentQuestions.length) {
+      // スパルタモード中はセーブしない（途中で辞めたらアウト）
+      if (!isSpartaMode && currentQuestions.length > 0 && currentIndex < currentQuestions.length) {
         localStorage.setItem('savedSession', JSON.stringify({
           questions: currentQuestions, index: currentIndex, score: score, mistakes: currentMistakes
         }));
@@ -647,6 +663,8 @@
     }
 
     function startGame(mode) {
+      isSpartaMode = (mode === 'sparta'); // スパルタモード判定
+
       if (mode === 'resume') {
         const session = JSON.parse(localStorage.getItem('savedSession'));
         if (session) {
@@ -654,18 +672,19 @@
           score = session.score; currentMistakes = session.mistakes;
         }
       } else {
+        // 通常のスタート（またはスパルタ）で途中データがある場合は警告
         if (localStorage.getItem('savedSession')) {
           if (!confirm('保存されている途中のデータはリセットされますが、最初からスタートしますか？')) return;
         }
 
-        if (mode === 'all') {
+        if (mode === 'all' || mode === 'sparta') {
           currentQuestions = [...allWords];
         } else if (mode === 'mistake') {
           currentQuestions = [...savedMistakes];
         }
 
-        // ★プレイ設定で「ランダム」が選ばれている時だけシャッフルする
-        if (playOrderSelect.value === 'random') {
+        // スパルタモードの時は設定を無視して「順番通り」を強制
+        if (mode !== 'sparta' && playOrderSelect.value === 'random') {
           currentQuestions.sort(() => Math.random() - 0.5);
         }
 
@@ -710,11 +729,14 @@
       saveSession();
       feedbackText.innerText = ""; feedbackText.className = ""; enInput.value = ""; enInput.disabled = false;
       nextBtn.classList.add('hidden');
-      progressText.innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
+
+      // スパルタモード中はプログレスバーにドクロを表示
+      const progressPrefix = isSpartaMode ? "☠️ スパルタ " : "問題 ";
+      progressText.innerText = `${progressPrefix}${currentIndex + 1} / ${currentQuestions.length}`;
+
       jaText.innerText = currentQuestions[currentIndex].ja;
 
       updateVisualText();
-
       setTimeout(() => enInput.focus(), 50);
     }
 
@@ -746,7 +768,20 @@
           }
           currentMistakes.push(currentQuestions[currentIndex]);
         }
-        nextBtn.classList.remove('hidden'); nextBtn.focus();
+
+        // ★ スパルタモードの時の特別処理
+        if (isSpartaMode) {
+          feedbackText.innerHTML += `<br><span class="sparta-alert">☠️ スパルタ発動！最初からやり直し！</span>`;
+          // 2秒間正解を見せたあと、強制的に1番に戻る
+          setTimeout(() => {
+            currentIndex = 0;
+            score = 0;
+            showQuestion();
+          }, 2000);
+        } else {
+          // 通常モードは「次へ」ボタンで進む
+          nextBtn.classList.remove('hidden'); nextBtn.focus();
+        }
       }
     }
 
@@ -816,6 +851,7 @@
     resumeBtn.addEventListener('click', () => startGame('resume'));
     startAllBtn.addEventListener('click', () => startGame('all'));
     startMistakeBtn.addEventListener('click', () => startGame('mistake'));
+    startSpartaBtn.addEventListener('click', () => startGame('sparta')); // ★ スパルタボタンのイベント
     viewListBtn.addEventListener('click', showWordList);
     nextBtn.addEventListener('click', nextQuestion);
 
