@@ -132,6 +132,37 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
+    /* 入力欄となぞり書きの重なり調整 */
+    .input-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+      background-color: #1a1f2b;
+      border-radius: 12px;
+    }
+
+    .ghost-text {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 18px;
+      font-size: 1.4rem;
+      color: rgba(255, 255, 255, 0.15);
+      /* うっすらグレー */
+      pointer-events: none;
+      text-align: center;
+      font-family: 'Courier New', Consolas, monospace;
+      /* 重なりをピッタリ合わせる等幅フォント */
+      letter-spacing: 1px;
+      box-sizing: border-box;
+      border: 2px solid transparent;
+      z-index: 1;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
     input[type="text"] {
       width: 100%;
       padding: 18px;
@@ -139,18 +170,22 @@
       border: 2px solid #555;
       border-radius: 12px;
       box-sizing: border-box;
-      margin-bottom: 20px;
       outline: none;
       transition: all 0.3s;
       text-align: center;
-      background-color: #1a1f2b;
+      background-color: transparent;
+      /* 下の文字を透けさせる */
       color: #00f2fe;
+      font-family: 'Courier New', Consolas, monospace;
+      letter-spacing: 1px;
+      position: relative;
+      z-index: 2;
     }
 
     input[type="text"]:focus {
       border-color: #00f2fe;
-      background-color: #242c3d;
       box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+      background-color: transparent;
     }
 
     #feedback {
@@ -292,17 +327,17 @@
       width: 45%;
     }
 
-    /* 印刷オプションのカード */
-    .print-options-card {
+    /* 設定エリアのカード（印刷・なぞり書き共通） */
+    .options-card {
       background: rgba(0, 0, 0, 0.2);
       padding: 15px;
       border-radius: 12px;
-      margin-top: 25px;
+      margin-top: 20px;
       border: 1px dashed #555;
       text-align: left;
     }
 
-    .print-options-card h3 {
+    .options-card h3 {
       color: #00f2fe;
       margin-top: 0;
       margin-bottom: 15px;
@@ -322,7 +357,7 @@
       outline: none;
     }
 
-    /* ＝＝＝ 印刷用のスタイル（紙に印刷される時だけ適用される） ＝＝＝ */
+    /* ＝＝＝ 印刷用のスタイル ＝＝＝ */
     #print-area {
       display: none;
     }
@@ -338,13 +373,10 @@
         display: none !important;
       }
 
-      /* アプリの画面は隠す */
       #print-area {
         display: block !important;
         width: 100%;
       }
-
-      /* 印刷エリアだけ表示 */
 
       .print-header {
         display: flex;
@@ -399,8 +431,6 @@
       .print-table td:nth-child(3) {
         width: 46%;
       }
-
-      /* 書き込み用の空白セル */
     }
   </style>
 </head>
@@ -411,15 +441,22 @@
     <h1>✨ 単語コンクール対策 ✨</h1>
 
     <div id="menu-screen">
-      <p class="menu-stats-text">収録単語数: <span id="total-word-count">0</span> 語</p>
+      <p class="menu-stats-text">出題範囲の単語数: <span id="total-word-count">0</span> 語</p>
 
       <button id="resume-btn" class="btn-success hidden">▶ 続きから再開</button>
       <button id="start-all-btn" class="btn-primary">▶ 全単語でスタート</button>
       <button id="start-mistake-btn" class="btn-warning" disabled>🔥 間違いリストでスタート (<span
           id="mistake-count">0</span>)</button>
-      <button id="view-list-btn" class="btn-secondary">📖 全単語一覧を見る</button>
 
-      <div class="print-options-card">
+      <div class="options-card">
+        <h3 style="color: #4facfe;">✍️ なぞり書きモード</h3>
+        <label style="display: flex; align-items: center; justify-content: center; cursor: pointer; color: #ffffff;">
+          <input type="checkbox" id="tracing-mode-toggle" style="width: 20px; height: 20px; margin-right: 10px;">
+          解答をうっすら表示してタイピングする
+        </label>
+      </div>
+
+      <div class="options-card">
         <h3>🖨️ テスト用紙を印刷</h3>
         <select id="print-scope" class="select-style">
           <option value="all">出題範囲： 全単語</option>
@@ -433,7 +470,8 @@
           / 印刷する</button>
       </div>
 
-      <button id="clear-mistake-btn" class="btn-danger hidden" style="margin-top:20px;">🗑 間違いリストをリセット</button>
+      <button id="view-list-btn" class="btn-secondary" style="margin-top: 15px;">📖 全単語一覧を見る</button>
+      <button id="clear-mistake-btn" class="btn-danger hidden" style="margin-top:15px;">🗑 間違いリストをリセット</button>
     </div>
 
     <div id="word-list-screen" class="hidden">
@@ -456,7 +494,12 @@
     <div id="play-screen" class="hidden">
       <div id="progress">問題 1 / 10</div>
       <div id="ja-text">日本語</div>
-      <input type="text" id="en-input" placeholder="英語を入力 (Enterで判定)" autocomplete="off" spellcheck="false">
+
+      <div class="input-wrapper">
+        <div id="ghost-text" class="ghost-text"></div>
+        <input type="text" id="en-input" autocomplete="off" spellcheck="false">
+      </div>
+
       <div id="feedback"></div>
       <button id="next-btn" class="btn-primary hidden">次へ</button>
       <button class="btn-secondary back-to-menu-btn btn-interrupt">中断してメニューに戻る</button>
@@ -479,14 +522,12 @@
   <script src="words.js"></script>
 
   <script>
-    // 変数設定
     let currentQuestions = [];
     let currentIndex = 0;
     let score = 0;
     let currentMistakes = [];
     let savedMistakes = JSON.parse(localStorage.getItem("mistakeWords")) || [];
 
-    // DOM要素の取得
     const menuScreen = document.getElementById('menu-screen');
     const playScreen = document.getElementById('play-screen');
     const resultScreen = document.getElementById('result-screen');
@@ -501,6 +542,7 @@
     const printBtn = document.getElementById('print-btn');
 
     const enInput = document.getElementById('en-input');
+    const ghostText = document.getElementById('ghost-text');
     const jaText = document.getElementById('ja-text');
     const progressText = document.getElementById('progress');
     const feedbackText = document.getElementById('feedback');
@@ -508,7 +550,6 @@
 
     const backButtons = document.querySelectorAll('.back-to-menu-btn');
 
-    // 初期化処理
     function initMenu() {
       if (typeof allWords !== 'undefined') {
         document.getElementById('total-word-count').innerText = allWords.length;
@@ -546,7 +587,6 @@
       }
     }
 
-    // 単語一覧
     function showWordList() {
       const tbody = document.getElementById('word-list-tbody');
       tbody.innerHTML = '';
@@ -563,7 +603,6 @@
       wordListScreen.classList.remove('hidden');
     }
 
-    // セーブ機能
     function saveSession() {
       if (currentQuestions.length > 0 && currentIndex < currentQuestions.length) {
         localStorage.setItem('savedSession', JSON.stringify({
@@ -572,7 +611,6 @@
       }
     }
 
-    // ゲーム進行
     function startGame(mode) {
       if (mode === 'resume') {
         const session = JSON.parse(localStorage.getItem('savedSession'));
@@ -609,10 +647,20 @@
       nextBtn.classList.add('hidden');
       progressText.innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
       jaText.innerText = currentQuestions[currentIndex].ja;
+
+      // なぞり書きモードの判定
+      const isTracing = document.getElementById('tracing-mode-toggle').checked;
+      if (isTracing) {
+        ghostText.innerText = currentQuestions[currentIndex].en;
+        enInput.placeholder = ""; // 重なるのでプレースホルダーを消す
+      } else {
+        ghostText.innerText = "";
+        enInput.placeholder = "英語を入力 (Enterで判定)";
+      }
+
       setTimeout(() => enInput.focus(), 50);
     }
 
-    // 判定処理
     function checkAnswer() {
       const userAnswer = enInput.value.trim().toLowerCase();
       const correctAnswer = currentQuestions[currentIndex].en.toLowerCase();
@@ -662,12 +710,9 @@
       }
     }
 
-    // ＝＝＝ 印刷機能の処理 ＝＝＝
     printBtn.addEventListener('click', () => {
       const scope = document.getElementById('print-scope').value;
       const order = document.getElementById('print-order').value;
-
-      // 印刷する単語の配列を作る
       let targetWords = scope === 'all' ? [...allWords] : [...savedMistakes];
 
       if (targetWords.length === 0) {
@@ -675,12 +720,8 @@
         return;
       }
 
-      // ランダムが選ばれていたらシャッフル
-      if (order === 'random') {
-        targetWords.sort(() => Math.random() - 0.5);
-      }
+      if (order === 'random') targetWords.sort(() => Math.random() - 0.5);
 
-      // 印刷用のHTMLを組み立てる
       const printArea = document.getElementById('print-area');
       let html = `
         <div class="print-header">
@@ -690,29 +731,23 @@
         <div class="print-flex-container">
       `;
 
-      // 2列にするための計算
       const halfLength = Math.ceil(targetWords.length / 2);
-
-      // 左側の列 (1列目)
       html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>英語</th></tr></thead><tbody>`;
       for (let i = 0; i < halfLength; i++) {
         html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td></td></tr>`;
       }
       html += `</tbody></table>`;
 
-      // 右側の列 (2列目)
       html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>英語</th></tr></thead><tbody>`;
       for (let i = halfLength; i < targetWords.length; i++) {
         html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td></td></tr>`;
       }
       html += `</tbody></table></div>`;
 
-      // 印刷エリアにHTMLを流し込んで、印刷ダイアログを呼び出す
       printArea.innerHTML = html;
       window.print();
     });
 
-    // イベントリスナー
     resumeBtn.addEventListener('click', () => startGame('resume'));
     startAllBtn.addEventListener('click', () => startGame('all'));
     startMistakeBtn.addEventListener('click', () => startGame('mistake'));
