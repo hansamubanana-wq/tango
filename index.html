@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +25,7 @@
       max-width: 550px;
       padding: 40px 30px;
       border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
       text-align: center;
       -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
@@ -34,15 +33,8 @@
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
@@ -52,15 +44,10 @@
       letter-spacing: 1px;
       text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
     }
-
-    h2 {
-      color: #4facfe;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
+    
+    h2 { color: #4facfe; }
+    .hidden { display: none !important; }
+    
     /* ＝＝＝ ボタンのスタイル ＝＝＝ */
     button {
       border: none;
@@ -72,49 +59,23 @@
       cursor: pointer;
       width: 100%;
       color: white;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       transition: all 0.3s ease;
     }
-
+    
     button:hover:not(:disabled) {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
+    button:active:not(:disabled) { transform: translateY(1px); }
 
-    button:active:not(:disabled) {
-      transform: translateY(1px);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      color: #000;
-    }
-
-    .btn-success {
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-      color: #000;
-    }
-
-    .btn-secondary {
-      background: linear-gradient(135deg, #434343 0%, #000000 100%);
-      border: 1px solid #555;
-    }
-
-    .btn-warning {
-      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-      color: #000;
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
-    }
-
-    .btn-interrupt {
-      margin-top: 30px;
-      font-size: 0.9rem;
-      padding: 10px;
-    }
-
+    .btn-primary { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #000; }
+    .btn-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: #000; }
+    .btn-secondary { background: linear-gradient(135deg, #434343 0%, #000000 100%); border: 1px solid #555; }
+    .btn-warning { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); color: #000; }
+    .btn-danger { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
+    .btn-interrupt { margin-top: 30px; font-size: 0.9rem; padding: 10px; }
+    
     button:disabled {
       background: #333;
       color: #777;
@@ -124,14 +85,8 @@
     }
 
     /* ＝＝＝ プレイ画面のスタイル ＝＝＝ */
-    #ja-text {
-      font-size: 2rem;
-      font-weight: bold;
-      margin: 25px 0;
-      color: #ffffff;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
+    #ja-text { font-size: 2rem; font-weight: bold; margin: 25px 0; color: #ffffff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+    
     /* 入力欄となぞり書きの重なり調整 */
     .input-wrapper {
       position: relative;
@@ -140,21 +95,15 @@
       background-color: #1a1f2b;
       border-radius: 12px;
     }
-
     .ghost-text {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       padding: 18px;
       font-size: 1.4rem;
-      color: rgba(255, 255, 255, 0.15);
-      /* うっすらグレー */
+      color: rgba(255, 255, 255, 0.15); /* うっすらグレー */
       pointer-events: none;
       text-align: center;
-      font-family: 'Courier New', Consolas, monospace;
-      /* 重なりをピッタリ合わせる等幅フォント */
+      font-family: 'Courier New', Consolas, monospace; /* 重なりをピッタリ合わせる等幅フォント */
       letter-spacing: 1px;
       box-sizing: border-box;
       border: 2px solid transparent;
@@ -162,7 +111,6 @@
       white-space: nowrap;
       overflow: hidden;
     }
-
     input[type="text"] {
       width: 100%;
       padding: 18px;
@@ -173,268 +121,77 @@
       outline: none;
       transition: all 0.3s;
       text-align: center;
-      background-color: transparent;
-      /* 下の文字を透けさせる */
+      background-color: transparent; /* 下の文字を透けさせる */
       color: #00f2fe;
       font-family: 'Courier New', Consolas, monospace;
       letter-spacing: 1px;
       position: relative;
       z-index: 2;
     }
+    input[type="text"]:focus { border-color: #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); background-color: transparent; }
+    
+    #feedback { font-size: 1.3rem; font-weight: bold; min-height: 35px; margin-bottom: 20px; }
+    .correct { color: #00e676; animation: pop 0.3s ease; text-shadow: 0 0 8px rgba(0,230,118,0.5); }
+    .incorrect { color: #ff5252; animation: shake 0.4s ease; text-shadow: 0 0 8px rgba(255,82,82,0.5); }
+    .correct-word { font-size: 1.5rem; color: #00f2fe; }
 
-    input[type="text"]:focus {
-      border-color: #00f2fe;
-      box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
-      background-color: transparent;
-    }
+    @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
-    #feedback {
-      font-size: 1.3rem;
-      font-weight: bold;
-      min-height: 35px;
-      margin-bottom: 20px;
-    }
-
-    .correct {
-      color: #00e676;
-      animation: pop 0.3s ease;
-      text-shadow: 0 0 8px rgba(0, 230, 118, 0.5);
-    }
-
-    .incorrect {
-      color: #ff5252;
-      animation: shake 0.4s ease;
-      text-shadow: 0 0 8px rgba(255, 82, 82, 0.5);
-    }
-
-    .correct-word {
-      font-size: 1.5rem;
-      color: #00f2fe;
-    }
-
-    @keyframes pop {
-      0% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.1);
-      }
-
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    @keyframes shake {
-
-      0%,
-      100% {
-        transform: translateX(0);
-      }
-
-      25% {
-        transform: translateX(-5px);
-      }
-
-      75% {
-        transform: translateX(5px);
-      }
-    }
-
-    #progress {
-      font-size: 1rem;
-      color: #9ba4b5;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
+    #progress { font-size: 1rem; color: #9ba4b5; font-weight: bold; margin-bottom: 10px; }
 
     /* ＝＝＝ メニュー・結果画面のスタイル ＝＝＝ */
-    .menu-stats-text {
-      color: #9ba4b5;
-      font-weight: bold;
-    }
-
-    #total-word-count {
-      color: #ffffff;
-      font-size: 1.2rem;
-    }
-
-    .result-score-text {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-
-    #score {
-      color: #00e676;
-      font-size: 1.5rem;
-    }
-
-    .mistake-log-title {
-      color: #ff5252;
-      font-weight: bold;
-    }
-
-    .mistake-word {
-      color: #00f2fe;
-    }
-
-    .mistake-separator {
-      border: 0;
-      border-bottom: 1px solid #333;
-      margin: 8px 0;
-    }
-
-    .scroll-box {
-      background: #1a1f2b;
-      padding: 15px;
-      border-radius: 12px;
-      border: 1px solid #333;
-      max-height: 300px;
-      overflow-y: auto;
-      margin-bottom: 20px;
-      text-align: left;
-      font-size: 1rem;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      padding: 10px;
-      border-bottom: 1px solid #333;
-    }
-
-    th {
-      background-color: #242c3d;
-      color: #4facfe;
-      position: sticky;
-      top: 0;
-    }
-
-    td:first-child {
-      font-weight: bold;
-      color: #777;
-      width: 10%;
-    }
-
-    td:nth-child(2) {
-      font-weight: bold;
-      color: #00f2fe;
-      width: 45%;
-    }
+    .menu-stats-text { color: #9ba4b5; font-weight: bold; }
+    #total-word-count { color: #ffffff; font-size: 1.2rem; }
+    .result-score-text { font-size: 1.2rem; font-weight: bold; }
+    #score { color: #00e676; font-size: 1.5rem; }
+    .mistake-log-title { color: #ff5252; font-weight: bold; }
+    .mistake-word { color: #00f2fe; }
+    .mistake-separator { border: 0; border-bottom: 1px solid #333; margin: 8px 0; }
+    .scroll-box { background: #1a1f2b; padding: 15px; border-radius: 12px; border: 1px solid #333; max-height: 300px; overflow-y: auto; margin-bottom: 20px; text-align: left; font-size: 1rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; border-bottom: 1px solid #333; }
+    th { background-color: #242c3d; color: #4facfe; position: sticky; top: 0; }
+    td:first-child { font-weight: bold; color: #777; width: 10%; }
+    td:nth-child(2) { font-weight: bold; color: #00f2fe; width: 45%; }
 
     /* 設定エリアのカード（印刷・なぞり書き共通） */
     .options-card {
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0,0,0,0.2);
       padding: 15px;
       border-radius: 12px;
       margin-top: 20px;
       border: 1px dashed #555;
       text-align: left;
     }
-
-    .options-card h3 {
-      color: #00f2fe;
-      margin-top: 0;
-      margin-bottom: 15px;
-      font-size: 1.1rem;
-      text-align: center;
-    }
-
+    .options-card h3 { color: #00f2fe; margin-top: 0; margin-bottom: 15px; font-size: 1.1rem; text-align: center; }
     .select-style {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      background: #1a1f2b;
-      color: #ffffff;
-      border: 1px solid #555;
-      font-size: 1rem;
-      outline: none;
+      width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px;
+      background: #1a1f2b; color: #ffffff; border: 1px solid #555; font-size: 1rem; outline: none;
     }
 
     /* ＝＝＝ 印刷用のスタイル ＝＝＝ */
-    #print-area {
-      display: none;
-    }
+    #print-area { display: none; }
 
     @media print {
-      body {
-        background: white !important;
-        color: black !important;
-        display: block;
-      }
-
-      #app-container {
-        display: none !important;
-      }
-
-      #print-area {
-        display: block !important;
-        width: 100%;
-      }
-
-      .print-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        margin-bottom: 20px;
-      }
-
-      .print-title {
-        font-size: 24px;
-        font-weight: bold;
-        border-bottom: 2px solid #000;
-        padding-bottom: 5px;
-      }
-
-      .print-info {
-        font-size: 16px;
-      }
-
-      .print-flex-container {
-        display: flex;
-        justify-content: space-between;
-      }
-
-      .print-table {
-        width: 48%;
-        border-collapse: collapse;
-      }
-
-      .print-table th,
-      .print-table td {
-        border: 1px solid #000;
-        padding: 8px;
-        font-size: 14px;
-        color: black;
-      }
-
-      .print-table th {
-        background-color: #f0f0f0;
-        color: black;
-      }
-
-      .print-table td:first-child {
-        text-align: center;
-        width: 8%;
-      }
-
-      .print-table td:nth-child(2) {
-        width: 46%;
-      }
-
-      .print-table td:nth-child(3) {
-        width: 46%;
-      }
+      body { background: white !important; color: black !important; display: block; }
+      #app-container { display: none !important; }
+      #print-area { display: block !important; width: 100%; }
+      
+      .print-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
+      .print-title { font-size: 24px; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 5px; }
+      .print-info { font-size: 16px; }
+      
+      .print-flex-container { display: flex; justify-content: space-between; }
+      .print-table { width: 48%; border-collapse: collapse; }
+      .print-table th, .print-table td { border: 1px solid #000; padding: 8px; font-size: 14px; color: black; }
+      .print-table th { background-color: #f0f0f0; color: black; }
+      .print-table td:first-child { text-align: center; width: 8%; }
+      .print-table td:nth-child(2) { width: 46%; }
+      .print-table td:nth-child(3) { width: 46%; }
     }
   </style>
 </head>
-
 <body>
 
   <div class="container" id="app-container">
@@ -442,12 +199,11 @@
 
     <div id="menu-screen">
       <p class="menu-stats-text">出題範囲の単語数: <span id="total-word-count">0</span> 語</p>
-
+      
       <button id="resume-btn" class="btn-success hidden">▶ 続きから再開</button>
       <button id="start-all-btn" class="btn-primary">▶ 全単語でスタート</button>
-      <button id="start-mistake-btn" class="btn-warning" disabled>🔥 間違いリストでスタート (<span
-          id="mistake-count">0</span>)</button>
-
+      <button id="start-mistake-btn" class="btn-warning" disabled>🔥 間違いリストでスタート (<span id="mistake-count">0</span>)</button>
+      
       <div class="options-card">
         <h3 style="color: #4facfe;">✍️ なぞり書きモード</h3>
         <label style="display: flex; align-items: center; justify-content: center; cursor: pointer; color: #ffffff;">
@@ -466,8 +222,7 @@
           <option value="normal">順番： 順番通り</option>
           <option value="random">順番： ランダム (本番対策！)</option>
         </select>
-        <button id="print-btn" class="btn-secondary" style="margin-top:5px; border-color:#00f2fe; color:#00f2fe;">PDF保存
-          / 印刷する</button>
+        <button id="print-btn" class="btn-secondary" style="margin-top:5px; border-color:#00f2fe; color:#00f2fe;">PDF保存 / 印刷する</button>
       </div>
 
       <button id="view-list-btn" class="btn-secondary" style="margin-top: 15px;">📖 全単語一覧を見る</button>
@@ -479,11 +234,7 @@
       <div class="scroll-box">
         <table>
           <thead>
-            <tr>
-              <th>No</th>
-              <th>英語</th>
-              <th>日本語</th>
-            </tr>
+            <tr><th>No</th><th>英語</th><th>日本語</th></tr>
           </thead>
           <tbody id="word-list-tbody"></tbody>
         </table>
@@ -494,7 +245,7 @@
     <div id="play-screen" class="hidden">
       <div id="progress">問題 1 / 10</div>
       <div id="ja-text">日本語</div>
-
+      
       <div class="input-wrapper">
         <div id="ghost-text" class="ghost-text"></div>
         <input type="text" id="en-input" autocomplete="off" spellcheck="false">
@@ -508,7 +259,7 @@
     <div id="result-screen" class="hidden">
       <h2>🎉 テスト終了！</h2>
       <p class="result-score-text">正解数: <span id="score">0</span> / <span id="total-questions">0</span></p>
-
+      
       <div id="mistake-log-container" class="hidden">
         <p class="mistake-log-title">今回間違えた単語:</p>
         <div id="mistake-log" class="scroll-box"></div>
@@ -525,14 +276,14 @@
     let currentQuestions = [];
     let currentIndex = 0;
     let score = 0;
-    let currentMistakes = [];
-    let savedMistakes = JSON.parse(localStorage.getItem("mistakeWords")) || [];
+    let currentMistakes = []; 
+    let savedMistakes = JSON.parse(localStorage.getItem("mistakeWords")) || []; 
 
     const menuScreen = document.getElementById('menu-screen');
     const playScreen = document.getElementById('play-screen');
     const resultScreen = document.getElementById('result-screen');
     const wordListScreen = document.getElementById('word-list-screen');
-
+    
     const resumeBtn = document.getElementById('resume-btn');
     const startAllBtn = document.getElementById('start-all-btn');
     const startMistakeBtn = document.getElementById('start-mistake-btn');
@@ -540,14 +291,14 @@
     const viewListBtn = document.getElementById('view-list-btn');
     const nextBtn = document.getElementById('next-btn');
     const printBtn = document.getElementById('print-btn');
-
+    
     const enInput = document.getElementById('en-input');
     const ghostText = document.getElementById('ghost-text');
     const jaText = document.getElementById('ja-text');
     const progressText = document.getElementById('progress');
     const feedbackText = document.getElementById('feedback');
     const mistakeCountSpan = document.getElementById('mistake-count');
-
+    
     const backButtons = document.querySelectorAll('.back-to-menu-btn');
 
     function initMenu() {
@@ -556,9 +307,9 @@
       } else {
         document.getElementById('total-word-count').innerText = "エラー: words.jsが見つかりません";
       }
-
+      
       updateMistakeUI();
-
+      
       const session = JSON.parse(localStorage.getItem('savedSession'));
       if (session && session.index > 0 && session.index < session.questions.length) {
         resumeBtn.classList.remove('hidden');
@@ -590,7 +341,7 @@
     function showWordList() {
       const tbody = document.getElementById('word-list-tbody');
       tbody.innerHTML = '';
-
+      
       if (typeof allWords !== 'undefined') {
         allWords.forEach((word, index) => {
           const tr = document.createElement('tr');
@@ -622,7 +373,7 @@
         if (localStorage.getItem('savedSession')) {
           if (!confirm('保存されている途中のデータはリセットされますが、最初からスタートしますか？')) return;
         }
-
+        
         if (mode === 'all') {
           currentQuestions = [...allWords];
         } else if (mode === 'mistake') {
@@ -630,9 +381,9 @@
         }
         currentQuestions.sort(() => Math.random() - 0.5);
         currentIndex = 0; score = 0; currentMistakes = [];
-        localStorage.removeItem('savedSession');
+        localStorage.removeItem('savedSession'); 
       }
-
+      
       document.getElementById('app-container').style.animation = 'none';
       setTimeout(() => document.getElementById('app-container').style.animation = 'fadeIn 0.4s ease-out', 10);
 
@@ -647,7 +398,7 @@
       nextBtn.classList.add('hidden');
       progressText.innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
       jaText.innerText = currentQuestions[currentIndex].ja;
-
+      
       // なぞり書きモードの判定
       const isTracing = document.getElementById('tracing-mode-toggle').checked;
       if (isTracing) {
@@ -665,7 +416,7 @@
       const userAnswer = enInput.value.trim().toLowerCase();
       const correctAnswer = currentQuestions[currentIndex].en.toLowerCase();
       enInput.disabled = true;
-
+      
       if (userAnswer === correctAnswer) {
         feedbackText.innerHTML = "⭕ 正解！"; feedbackText.className = "correct"; score++;
         savedMistakes = savedMistakes.filter(w => w.en !== currentQuestions[currentIndex].en);
@@ -674,7 +425,7 @@
       } else {
         feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong class="correct-word">${currentQuestions[currentIndex].en}</strong>`;
         feedbackText.className = "incorrect";
-
+        
         const isAlreadyMistaken = savedMistakes.some(w => w.en === currentQuestions[currentIndex].en);
         if (!isAlreadyMistaken) {
           savedMistakes.push(currentQuestions[currentIndex]);
@@ -691,17 +442,17 @@
     }
 
     function showResult() {
-      localStorage.removeItem('savedSession');
+      localStorage.removeItem('savedSession'); 
       document.getElementById('app-container').style.animation = 'none';
       setTimeout(() => document.getElementById('app-container').style.animation = 'fadeIn 0.5s ease-out', 10);
 
       playScreen.classList.add('hidden'); resultScreen.classList.remove('hidden');
       document.getElementById('score').innerText = score;
       document.getElementById('total-questions').innerText = currentQuestions.length;
-
+      
       const mistakeLogContainer = document.getElementById('mistake-log-container');
       const mistakeLog = document.getElementById('mistake-log');
-
+      
       if (currentMistakes.length > 0) {
         mistakeLogContainer.classList.remove('hidden');
         mistakeLog.innerHTML = currentMistakes.map(w => `${w.ja} <br>→ <strong class="mistake-word">${w.en}</strong>`).join('<hr class="mistake-separator">');
@@ -753,11 +504,11 @@
     startMistakeBtn.addEventListener('click', () => startGame('mistake'));
     viewListBtn.addEventListener('click', showWordList);
     nextBtn.addEventListener('click', nextQuestion);
-
+    
     backButtons.forEach(btn => { btn.addEventListener('click', initMenu); });
-
+    
     clearMistakeBtn.addEventListener('click', () => {
-      if (confirm('間違いリストをすべてリセットしてもいい？')) {
+      if(confirm('間違いリストをすべてリセットしてもいい？')) {
         savedMistakes = []; localStorage.removeItem("mistakeWords"); updateMistakeUI();
       }
     });
@@ -769,5 +520,4 @@
     window.onload = () => { initMenu(); };
   </script>
 </body>
-
 </html>
