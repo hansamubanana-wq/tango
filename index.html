@@ -395,19 +395,22 @@
       outline: none;
     }
 
-    /* ＝＝＝ 印刷用のスタイル（表：1~60、裏：61~100） ＝＝＝ */
+    /* ＝＝＝ 🖨️ 本番完コピ 印刷用スタイル ＝＝＝ */
     #print-area {
       display: none;
     }
 
     @media print {
+
+      /* 背景やアプリ本体を隠し、文字サイズを大きめに設定 */
       body {
         background: white !important;
         color: black !important;
         display: block;
-        font-size: 11px;
+        font-size: 13px;
         margin: 0;
         padding: 0;
+        font-family: 'Yu Mincho', 'MS Mincho', serif;
       }
 
       #app-container {
@@ -419,75 +422,90 @@
         width: 100%;
       }
 
-      /* 改ページ用のクラス */
+      /* 改ページ設定と全体の余白 */
       .print-page {
         page-break-after: always;
-        padding: 10px 20px;
+        padding: 15px 25px;
       }
 
       .print-page:last-child {
         page-break-after: auto;
       }
 
-      .print-header {
+      /* ヘッダー周りのデザイン（本番のテスト用紙を再現） */
+      .print-header-top {
+        font-weight: bold;
+        font-size: 15px;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+
+      .print-header-info {
         display: flex;
         justify-content: space-between;
-        align-items: flex-end;
-        margin-bottom: 10px;
+        font-size: 14px;
+        margin-bottom: 12px;
       }
 
-      .print-title {
-        font-size: 16px;
-        font-weight: bold;
-        border-bottom: 1.5px solid #000;
-        padding-bottom: 3px;
+      .print-instructions {
+        border: 1.5px solid #000;
+        padding: 10px;
+        font-size: 12px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        text-align: left;
+        font-family: sans-serif;
       }
 
-      .print-info {
-        font-size: 11px;
-      }
-
+      /* テーブル全体のレイアウト（2列構成） */
       .print-flex-container {
         display: flex;
         justify-content: space-between;
       }
 
       .print-table {
-        width: 49%;
+        width: 48.5%;
         border-collapse: collapse;
         margin-bottom: 5px;
       }
 
+      /* セルと文字の大きさ調整 */
       .print-table th,
       .print-table td {
         border: 1px solid #000;
-        padding: 3px 4px;
-        font-size: 10px;
+        padding: 7px 5px;
+        font-size: 13px;
         color: black;
-        line-height: 1.2;
+        line-height: 1.4;
+        font-family: sans-serif;
       }
 
-      /* 印刷時に背景色が消えないようにする設定 */
       .print-table th {
         background-color: #f0f0f0 !important;
         -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
         color: black;
-        font-size: 11px;
+        font-size: 13px;
+        text-align: center;
       }
 
+      /* 各列の幅 */
       .print-table td:first-child {
         text-align: center;
         width: 6%;
+        font-weight: bold;
       }
 
       .print-table td:nth-child(2) {
-        width: 47%;
+        width: 44%;
       }
 
       .print-table td:nth-child(3) {
-        width: 47%;
+        width: 50%;
         font-family: 'Courier New', monospace;
         font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
       }
     }
   </style>
@@ -508,7 +526,7 @@
       <button id="start-sparta-btn" class="btn-sparta">☠️ スパルタモード (順番通り・1ミスで終了)</button>
 
       <div class="options-card">
-        <h3 style="color: #4facfe;">🎮 プレイ設定</h3>
+        <h3 style="color: #4facfe;">🎮 プレイ設定 (アプリ用)</h3>
         <select id="play-order" class="select-style" style="margin-bottom: 15px;">
           <option value="random">出題順： ランダム (おすすめ！)</option>
           <option value="normal">出題順： 順番通り</option>
@@ -520,15 +538,15 @@
       </div>
 
       <div class="options-card">
-        <h3>🖨️ テスト用紙を印刷</h3>
+        <h3>🖨️ 本番テスト用紙を印刷</h3>
         <select id="print-scope" class="select-style">
-          <option value="all">出題範囲： 全単語 (表:1~60 裏:61~)</option>
-          <option value="mistake">出題範囲： 間違いリストのみ</option>
+          <option value="all">範囲： 全単語 (表:1~60 裏:61~100)</option>
+          <option value="mistake">範囲： 間違いリストのみ</option>
         </select>
         <label
           style="display: flex; align-items: center; justify-content: center; cursor: pointer; color: #ffffff; margin: 10px 0;">
           <input type="checkbox" id="print-answers-toggle" style="width: 20px; height: 20px; margin-right: 10px;">
-          解答も一緒に印刷する
+          解答（赤字）も一緒に印刷する
         </label>
         <button id="print-btn" class="btn-secondary" style="margin-top:5px; border-color:#00f2fe; color:#00f2fe;">PDF保存
           / 印刷する</button>
@@ -809,7 +827,7 @@
       }
     }
 
-    // ★ 印刷処理のアップデート（1ページ目:1~60, 2ページ目:61~100）
+    // ★ 印刷処理の超進化！本番完全再現版
     printBtn.addEventListener('click', () => {
       const scope = document.getElementById('print-scope').value;
       const showAnswers = document.getElementById('print-answers-toggle').checked;
@@ -820,56 +838,85 @@
         return;
       }
 
+      // 解答欄を生成する便利関数
+      const renderAnswer = (word) => {
+        if (showAnswers) {
+          return `<span style="color: #d32f2f;">${word.en}</span>`; // 赤シート用に赤字！
+        }
+
+        // 問題文に【〇語】があるかチェックして、カッコを自動生成
+        let match = word.ja.match(/【(\d+)語】/);
+        if (match) {
+          let count = parseInt(match[1]);
+          let brackets = [];
+          for (let k = 0; k < count; k++) {
+            // カッコの中の空白を調整 (長い時は少し狭く)
+            let spaces = count >= 4 ? '&nbsp;' : '&nbsp;&nbsp;&nbsp;&nbsp;';
+            brackets.push(`(${spaces})`);
+          }
+          // flexboxで綺麗に折り返して並べる
+          return `<div style="font-weight: normal; font-size: 11px; color: #777; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;">${brackets.join('')}</div>`;
+        }
+        return ''; // 1語の場合はただの空欄
+      };
+
       const printArea = document.getElementById('print-area');
       let html = '';
 
-      // --- 1ページ目 (1〜60) ---
+      // --- 1ページ目 (表：1〜60) ---
       html += `
         <div class="print-page">
-          <div class="print-header">
-            <div class="print-title">単語コンクール 対策テスト ${showAnswers ? '【解答】' : ''}</div>
-            <div class="print-info">Class ___ No. ___ Name ____________________ &nbsp;&nbsp;&nbsp;&nbsp; / ${targetWords.length} 点</div>
+          <div class="print-header-top">中3英語 第3回【学年統一】単語コンクール Wednesday, February 25, 2026 ${showAnswers ? '【解答】' : ''}</div>
+          <div class="print-header-info">
+            <div>Class 30 ( &nbsp;&nbsp;&nbsp; ) No. ( &nbsp;&nbsp;&nbsp; ) Name ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</div>
+            <div>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ) 点</div>
+          </div>
+          <div class="print-instructions">
+            ◎次の日本語を英語にしなさい。語数指定・文字指定があるものは従うこと。(語数指定のないものは1語)<br>
+            ※原則、単語リストに載っている単語を正解とする。(「~」や「･･･」は表示されているもの以外は書かなくてよい)<br>
+            ※名詞は単数形、動詞は現在形(原形)で答えること。<br>
+            ※頭を大文字で書くべき単語は必ず大文字で書くこと。
           </div>
           <div class="print-flex-container">
       `;
+
       // 1列目 (1~30)
-      html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>英語</th></tr></thead><tbody>`;
+      html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>解答欄</th></tr></thead><tbody>`;
       for (let i = 0; i < 30 && i < targetWords.length; i++) {
-        const answerText = showAnswers ? targetWords[i].en : '';
-        html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td>${answerText}</td></tr>`;
+        html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td>${renderAnswer(targetWords[i])}</td></tr>`;
       }
       html += `</tbody></table>`;
 
       // 2列目 (31~60)
-      html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>英語</th></tr></thead><tbody>`;
+      html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>解答欄</th></tr></thead><tbody>`;
       for (let i = 30; i < 60 && i < targetWords.length; i++) {
-        const answerText = showAnswers ? targetWords[i].en : '';
-        html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td>${answerText}</td></tr>`;
+        html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td>${renderAnswer(targetWords[i])}</td></tr>`;
       }
       html += `</tbody></table></div></div>`;
 
-      // --- 2ページ目 (61〜100) があれば追加 ---
+      // --- 2ページ目 (裏：61〜100) があれば追加 ---
       if (targetWords.length > 60) {
         html += `
           <div class="print-page">
-            <div class="print-header">
-              <div class="print-title">単語コンクール 対策テスト (裏面) ${showAnswers ? '【解答】' : ''}</div>
-            </div>
+            <div class="print-header-top" style="visibility: hidden;">裏面ダミーヘッダー</div>
             <div class="print-flex-container">
         `;
+
+        // 裏面は40問なので、20問ずつ半分に割る
+        const backTotal = targetWords.length - 60;
+        const backHalf = Math.ceil(backTotal / 2);
+
         // 1列目 (61~80)
-        html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>英語</th></tr></thead><tbody>`;
-        for (let i = 60; i < 80 && i < targetWords.length; i++) {
-          const answerText = showAnswers ? targetWords[i].en : '';
-          html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td>${answerText}</td></tr>`;
+        html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>解答欄</th></tr></thead><tbody>`;
+        for (let i = 60; i < 60 + backHalf && i < targetWords.length; i++) {
+          html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td>${renderAnswer(targetWords[i])}</td></tr>`;
         }
         html += `</tbody></table>`;
 
         // 2列目 (81~100)
-        html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>英語</th></tr></thead><tbody>`;
-        for (let i = 80; i < 100 && i < targetWords.length; i++) {
-          const answerText = showAnswers ? targetWords[i].en : '';
-          html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td>${answerText}</td></tr>`;
+        html += `<table class="print-table"><thead><tr><th>No</th><th>日本語</th><th>解答欄</th></tr></thead><tbody>`;
+        for (let i = 60 + backHalf; i < targetWords.length; i++) {
+          html += `<tr><td>${i + 1}</td><td>${targetWords[i].ja}</td><td>${renderAnswer(targetWords[i])}</td></tr>`;
         }
         html += `</tbody></table></div></div>`;
       }
