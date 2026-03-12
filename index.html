@@ -149,17 +149,17 @@
       bottom: 0;
       padding: 18px;
       font-size: 1.4rem;
-      color: rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.2);
       /* うっすらグレー */
       pointer-events: none;
       text-align: center;
       font-family: 'Courier New', Consolas, monospace;
-      /* 重なりをピッタリ合わせる等幅フォント */
       letter-spacing: 1px;
       box-sizing: border-box;
       border: 2px solid transparent;
       z-index: 1;
-      white-space: nowrap;
+      white-space: pre;
+      /* スペースをそのまま表示 */
       overflow: hidden;
     }
 
@@ -174,7 +174,6 @@
       transition: all 0.3s;
       text-align: center;
       background-color: transparent;
-      /* 下の文字を透けさせる */
       color: #00f2fe;
       font-family: 'Courier New', Consolas, monospace;
       letter-spacing: 1px;
@@ -547,6 +546,7 @@
     const progressText = document.getElementById('progress');
     const feedbackText = document.getElementById('feedback');
     const mistakeCountSpan = document.getElementById('mistake-count');
+    const tracingToggle = document.getElementById('tracing-mode-toggle');
 
     const backButtons = document.querySelectorAll('.back-to-menu-btn');
 
@@ -641,6 +641,24 @@
       showQuestion();
     }
 
+    // なぞり書きの表示を更新する関数
+    function updateGhostText() {
+      const isTracing = tracingToggle.checked;
+      if (!isTracing || !currentQuestions[currentIndex]) {
+        ghostText.innerHTML = "";
+        return;
+      }
+
+      const targetStr = currentQuestions[currentIndex].en;
+      const typedStr = enInput.value;
+
+      // 入力した文字数分だけを透明にして隠し、残りを表示する
+      const hiddenPart = targetStr.substring(0, typedStr.length);
+      const visiblePart = targetStr.substring(typedStr.length);
+
+      ghostText.innerHTML = `<span style="opacity: 0;">${hiddenPart}</span>${visiblePart}`;
+    }
+
     function showQuestion() {
       saveSession();
       feedbackText.innerText = ""; feedbackText.className = ""; enInput.value = ""; enInput.disabled = false;
@@ -648,15 +666,9 @@
       progressText.innerText = `問題 ${currentIndex + 1} / ${currentQuestions.length}`;
       jaText.innerText = currentQuestions[currentIndex].ja;
 
-      // なぞり書きモードの判定
-      const isTracing = document.getElementById('tracing-mode-toggle').checked;
-      if (isTracing) {
-        ghostText.innerText = currentQuestions[currentIndex].en;
-        enInput.placeholder = ""; // 重なるのでプレースホルダーを消す
-      } else {
-        ghostText.innerText = "";
-        enInput.placeholder = "英語を入力 (Enterで判定)";
-      }
+      const isTracing = tracingToggle.checked;
+      enInput.placeholder = isTracing ? "" : "英語を入力 (Enterで判定)";
+      updateGhostText(); // 最初の表示をセット
 
       setTimeout(() => enInput.focus(), 50);
     }
@@ -664,14 +676,14 @@
     function checkAnswer() {
       const userAnswer = enInput.value.trim().toLowerCase();
       const correctAnswer = currentQuestions[currentIndex].en.toLowerCase();
-      const isTracing = document.getElementById('tracing-mode-toggle').checked; // なぞり書きモードかチェック
+      const isTracing = tracingToggle.checked; // なぞり書きモードの確認
 
       enInput.disabled = true;
 
       if (userAnswer === correctAnswer) {
         feedbackText.innerHTML = "⭕ 正解！"; feedbackText.className = "correct"; score++;
 
-        // なぞり書きモードじゃない時だけ、間違いリストから消す
+        // なぞり書きモードじゃない時だけ間違いリストから消す
         if (!isTracing) {
           savedMistakes = savedMistakes.filter(w => w.en !== currentQuestions[currentIndex].en);
           localStorage.setItem("mistakeWords", JSON.stringify(savedMistakes));
@@ -681,7 +693,7 @@
         feedbackText.innerHTML = `❌ 違うよ！<br>正解は： <strong class="correct-word">${currentQuestions[currentIndex].en}</strong>`;
         feedbackText.className = "incorrect";
 
-        // なぞり書きモードじゃない時だけ、間違いリストに登録する
+        // なぞり書きモードじゃない時だけ間違いリストに登録する
         if (!isTracing) {
           const isAlreadyMistaken = savedMistakes.some(w => w.en === currentQuestions[currentIndex].en);
           if (!isAlreadyMistaken) {
@@ -771,8 +783,17 @@
       }
     });
 
+    // 文字を入力するたびに、なぞり書きの表示を更新する
+    enInput.addEventListener('input', updateGhostText);
+
     enInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter' && enInput.value.trim() !== "") checkAnswer();
+    });
+
+    // なぞり書きモードを切り替えた時の動作
+    tracingToggle.addEventListener('change', () => {
+      enInput.placeholder = tracingToggle.checked ? "" : "英語を入力 (Enterで判定)";
+      updateGhostText();
     });
 
     window.onload = () => { initMenu(); };
